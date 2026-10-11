@@ -1,4 +1,5 @@
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class ListaSimple {
 
@@ -35,15 +36,15 @@ public class ListaSimple {
      public BigDecimal PromedioPrecioPorCategoria(String categoria) {
 
         if (categoria == null){
-            return 0.0;
+            return new BigDecimal("0.0");
         }
 
-        Nodo actual = cabeza;
-        BigDecimal sumaPrecios = BigDecimal.ZERO;
+        Nodo actual = this.inicio;
+        BigDecimal sumaPrecios = new BigDecimal("0.0");
         int cantidadMedicamentos = 0;
 
         while (actual != null) {
-            if (actual.getDato().getCategoria().equals(categoria)) {
+            if (actual.getDato().getCategoria().name().equals(categoria)) {
                 sumaPrecios = sumaPrecios.add(actual.getDato().getPrecio());
                 cantidadMedicamentos++;
             }
@@ -51,14 +52,10 @@ public class ListaSimple {
         }
 
         if (cantidadMedicamentos == 0) {
-            return BigDecimal.ZERO;
+            return new BigDecimal("0.0");
         }
 
-        BigDecimal promedio = sumaPrecios.divide(
-                BigDecimal.valueOf(cantidadMedicamentos),
-                2,
-                RoundingMode.HALF_UP
-        );
+        BigDecimal promedio = sumaPrecios.divide(BigDecimal.valueOf(cantidadMedicamentos),2, RoundingMode.HALF_UP);
 
         return promedio;
     }
@@ -104,20 +101,29 @@ public class ListaSimple {
 
     // Ray Sanjudo Mesa
     public int AplicarAumentoGeneral(double porcentaje) {
-        if (!(porcentaje>0) || inicio== null) {
+
+        if (porcentaje < 0) {
+            System.out.println("El porcentaje no puede ser negativo");
             return 0;
         }
 
-        BigDecimal factor= BigDecimal.ONE.add(BigDecimal.valueOf(porcentaje));
+        if (porcentaje == 0.0) {
+            System.out.println("No hubo cambios: el porcentaje es 0");
+            return 0;
+        }
+
+        BigDecimal factor = BigDecimal.ONE.add(BigDecimal.valueOf(porcentaje));
 
         int modificados= 0;
         Nodo actual= inicio;
 
         while (actual != null) {
+
             Medicamento med= actual.getDato();
             med.setPrecio(med.getPrecio().multiply(factor));
             modificados++;
             actual = actual.getSiguiente();
+
         }
 
         return modificados;
