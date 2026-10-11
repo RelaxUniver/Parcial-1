@@ -41,11 +41,7 @@ public class ListaSimple {
     por su código y le suma la cantidad entregada. Devuelve true si existe y false si no.
     */
 
-    /* Yaisel Pinos Durán
-    d) ListarPreciosInversos(): Devuelve la lista de precios en orden inverso al 
-    que fueron ingresados.
-    */
-
+    // Yaisel Pinos Durán
     private void invertir() {
 
         Nodo actual = this.inicio;
@@ -79,6 +75,7 @@ public class ListaSimple {
 
     }
 
+    // Ray Sanjudo Mesa
     public int AplicarAumentoGeneral(double porcentaje) {
         if (!(porcentaje>0) || inicio== null) {
             return 0;
