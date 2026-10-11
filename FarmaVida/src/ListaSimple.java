@@ -79,9 +79,24 @@ public class ListaSimple {
 
     }
 
-    /* Ray Sanjudo Mesa
-    e) AplicarAumentoGeneral(double porcentaje): Incrementa el precio de todos los 
-    medicamentos en el porcentaje dado y devuelve la cantidad de medicamentos modificados.
-    */
+    public int AplicarAumentoGeneral(double porcentaje) {
+        if (!(porcentaje>0) || inicio== null) {
+            return 0;
+        }
+
+        BigDecimal factor= BigDecimal.ONE.add(BigDecimal.valueOf(porcentaje));
+
+        int modificados= 0;
+        Nodo actual= inicio;
+
+        while (actual != null) {
+            Medicamento med= actual.getDato();
+            med.setPrecio(med.getPrecio().multiply(factor));
+            modificados++;
+            actual = actual.getSiguiente();
+        }
+
+        return modificados;
+    }
 
 }
