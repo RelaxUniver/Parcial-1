@@ -6,11 +6,12 @@ Se tienen los siguientes elementos principales para recorrer la lista y aplicar 
 |---|---|
 | inicio | Referencia al primer nodo de la lista de medicamentos. |
 | actual | Puntero auxiliar que recorre la lista nodo a nodo. |
-| porcentaje | Parámetro de entrada: el aumento a aplicar, expresado como fracción decimal (`0.25` = 25%). |
-| nuevoPrecio | Variable auxiliar que guarda el resultado del cálculo antes de asignarlo al nodo. |
-| contador | Lleva la cuenta de cuántos medicamentos fueron modificados. |
+| porcentaje | Parámetro de entrada (`double`): el aumento a aplicar, expresado como fracción decimal (`0.25` = 25%). |
+| factor | `BigDecimal` con el multiplicador `1 + porcentaje`. Se calcula una sola vez, antes del recorrido. |
+| med | Medicamento del nodo actual (`actual.getDato()`), cuyo precio se actualiza. |
+| modificados | Lleva la cuenta de cuántos medicamentos fueron modificados. |
 
-La operación consiste en recorrer toda la lista desde el inicio hasta `null`, y por cada nodo calcular su nuevo precio multiplicándolo por `(1 + porcentaje)`. Se actualiza el nodo, se incrementa el contador, y se avanza al siguiente. Al final se retorna el contador.
+La operación consiste en validar el porcentaje, calcular una sola vez el factor `1 + porcentaje`, y recorrer toda la lista desde el inicio hasta `null`, multiplicando en cada nodo el precio del medicamento por ese factor. Se actualiza el medicamento, se incrementa `modificados`, y se avanza al siguiente nodo. Al final se retorna `modificados`.
 
 ## 2. Aviso Importante
 
@@ -22,7 +23,7 @@ El método retorna `0` en **tres situaciones distintas**:
 2. El porcentaje recibido era negativo (rechazado).
 3. El porcentaje recibido era `0.0` (no hubo cambios reales).
 
-Como los tres casos devuelven el mismo valor numérico, quien llame al método no puede distinguirlos solo con el retorno. Por eso, en cada caso se imprime un mensaje informativo antes de retornar.
+Como los tres casos devuelven el mismo valor numérico, quien llame al método no puede distinguirlos solo con el retorno. Por eso, cuando el porcentaje es negativo o cero se imprime un mensaje informativo antes de retornar. En el caso de la lista vacía no se imprime ningún mensaje: el ciclo simplemente no se ejecuta y se retorna `0`.
 
 ### Convención del parámetro
 
@@ -38,9 +39,34 @@ nuevoPrecio = precioActual * (1 + porcentaje)
 
 Esta forma es algebraicamente equivalente a `precio + precio * porcentaje`, pero hace una sola operación. Con `porcentaje = 0.25`, ambas dan el mismo resultado.
 
+En el código el factor se calcula una única vez antes del ciclo y se aplica a cada precio con `multiply`:
+
+```
+factor = BigDecimal.ONE.add(BigDecimal.valueOf(porcentaje))
+med.setPrecio(med.getPrecio().multiply(factor))
+```
+
+Se usa `BigDecimal.valueOf(porcentaje)` (y no `new BigDecimal(porcentaje)`) para que, por ejemplo, `0.10` se convierta exactamente en `0.1` y no en su representación binaria aproximada.
+
+### Escala de los precios resultantes
+
+El método **no redondea**. Al multiplicar dos `BigDecimal`, la escala del resultado es la suma de las escalas de los operandos, por lo que los precios quedan con más decimales que antes. Por ejemplo, con `porcentaje = 0.10` (`factor = 1.1`):
+
+```
+10.0 × 1.1  = 11.00
+2.50 × 1.1  = 2.750
+12.00 × 1.1 = 13.200
+```
+
+El valor es numéricamente el mismo que se obtendría redondeando (`2.750` equivale a `2.75`), pero el `BigDecimal` conserva los decimales adicionales.
+
+### Valores no numéricos
+
+El método no valida `Double.NaN` ni `Double.POSITIVE_INFINITY`. Ninguno de los dos cumple `porcentaje < 0` ni `porcentaje == 0.0`, por lo que superan las validaciones y `BigDecimal.valueOf(porcentaje)` lanza `NumberFormatException`.
+
 ### Contador redundante con la lógica actual
 
-Como los porcentajes `0` y negativos se rechazan al inicio, todos los nodos que se recorren en el ciclo **se modifican sin excepción**. Eso significa que `contador` termina valiendo siempre `cantidad`. Se deja igualmente porque documenta la intención del ciclo y hace el método más robusto ante cambios futuros.
+Como los porcentajes `0` y negativos se rechazan al inicio, todos los nodos que se recorren en el ciclo **se modifican sin excepción**. Eso significa que `modificados` termina valiendo siempre el número de nodos de la lista (que coincide con `cantidad` cuando este atributo está actualizado). Se deja igualmente porque documenta la intención del ciclo y hace el método más robusto ante cambios futuros.
 
 ## 3. Pseudocódigo
 
@@ -57,17 +83,18 @@ PROCEDIMIENTO AplicarAumentoGeneral(porcentaje)
         RETORNAR 0
     FIN SI
 
+    factor = 1 + porcentaje
     actual = inicio
-    contador = 0
+    modificados = 0
 
     CICLO (actual != null) {
-        nuevoPrecio = actual.getPrecio() * (1 + porcentaje)
-        actual.setPrecio(nuevoPrecio)
-        contador++
+        med = actual.getDato()
+        med.setPrecio(med.getPrecio() * factor)
+        modificados++
         actual = actual.siguiente
     }
 
-    RETORNAR contador
+    RETORNAR modificados
 
 FIN PROCEDIMIENTO
 ```
@@ -89,10 +116,10 @@ AplicarAumentoGeneral(0.10)
 Estado inicial de punteros y parámetros:
 
 ```
-inicio     = N1
-actual     = N1
-contador   = 0
-porcentaje = 0.10
+inicio      = N1
+actual      = N1
+modificados = 0
+porcentaje  = 0.10
 ```
 
 Representación gráfica:
@@ -111,6 +138,10 @@ Representación gráfica:
 
 - `porcentaje = 0.10` → `0.10 == 0.0` es falso, continúa.
 
+**Cálculo del factor**
+
+- `factor = 1 + 0.10 = 1.1`
+
 **Iteración 1**
 
 Condición:
@@ -121,51 +152,51 @@ SI (actual != null) ENTONCES
 
 Evaluación:
 
-- `actual = N1`
-- `nuevoPrecio = 10.0 * (1 + 0.10) = 10.0 * 1.10 = 11.0`
-- `N1.setPrecio(11.0)`
-- `contador = 1`
+- `actual = N1`, `med = N1.getDato()`
+- `precio nuevo = 10.0 * 1.1 = 11.00`
+- `med.setPrecio(11.00)`
+- `modificados = 1`
 - `actual = N1.siguiente = N2`
 
 Estado:
 
 ```
-[N1 | inicio, precio=11.0] -> [N2 | actual] -> [N3] -> null
-contador = 1
+[N1 | inicio, precio=11.00] -> [N2 | actual] -> [N3] -> null
+modificados = 1
 ```
 
 **Iteración 2**
 
 Evaluación:
 
-- `actual = N2`
-- `nuevoPrecio = 20.0 * 1.10 = 22.0`
-- `N2.setPrecio(22.0)`
-- `contador = 2`
+- `actual = N2`, `med = N2.getDato()`
+- `precio nuevo = 20.0 * 1.1 = 22.00`
+- `med.setPrecio(22.00)`
+- `modificados = 2`
 - `actual = N2.siguiente = N3`
 
 Estado:
 
 ```
-[N1] -> [N2 | precio=22.0] -> [N3 | actual] -> null
-contador = 2
+[N1] -> [N2 | precio=22.00] -> [N3 | actual] -> null
+modificados = 2
 ```
 
 **Iteración 3**
 
 Evaluación:
 
-- `actual = N3`
-- `nuevoPrecio = 15.0 * 1.10 = 16.5`
-- `N3.setPrecio(16.5)`
-- `contador = 3`
+- `actual = N3`, `med = N3.getDato()`
+- `precio nuevo = 15.0 * 1.1 = 16.50`
+- `med.setPrecio(16.50)`
+- `modificados = 3`
 - `actual = N3.siguiente = null`
 
 Estado:
 
 ```
-[N1] -> [N2] -> [N3 | precio=16.5] -> null | actual
-contador = 3
+[N1] -> [N2] -> [N3 | precio=16.50] -> null | actual
+modificados = 3
 ```
 
 El ciclo termina porque `actual == null`.
@@ -173,7 +204,7 @@ El ciclo termina porque `actual == null`.
 **Retorno:**
 
 ```
-RETORNAR contador = 3
+RETORNAR modificados = 3
 ```
 
 ## 6. Resultado final
@@ -199,10 +230,10 @@ Resultado del método:
 Lista después del aumento:
 
 ```
-[N1: precio=11.0] -> [N2: precio=22.0] -> [N3: precio=16.5] -> null
+[N1: precio=11.00] -> [N2: precio=22.00] -> [N3: precio=16.50] -> null
 ```
 
-Cada precio fue aumentado en un 10% y el método confirma que se modificaron los tres medicamentos.
+Cada precio fue aumentado en un 10% (los decimales adicionales provienen de la escala de `BigDecimal`, no de un cambio en el valor) y el método confirma que se modificaron los tres medicamentos.
 
 ## 7. Casos borde
 
@@ -236,9 +267,9 @@ inicio = null
 Llamada: `AplicarAumentoGeneral(0.10)`
 
 - Las dos validaciones del porcentaje pasan (el porcentaje es válido).
-- `actual = inicio = null`, el ciclo no se ejecuta ni una vez.
-- `contador` queda en 0.
-- Retorna `0`.
+- `factor = 1.1`; `actual = inicio = null`, el ciclo no se ejecuta ni una vez.
+- `modificados` queda en 0.
+- Retorna `0`, sin imprimir ningún mensaje.
 
 Resultado correcto: no hay medicamentos que modificar, así que se modifica ninguno.
 
@@ -252,7 +283,7 @@ Ejemplo:
 
 Llamada: `AplicarAumentoGeneral(0.10)`
 
-- Iteración única: `nuevoPrecio = 10.0 * 1.10 = 11.0`, `N1.setPrecio(11.0)`, `contador = 1`.
+- Iteración única: `precio nuevo = 10.0 * 1.1 = 11.00`, `med.setPrecio(11.00)`, `modificados = 1`.
 - Retorna `1`.
 
 El único medicamento se modifica correctamente.
@@ -262,7 +293,15 @@ El único medicamento se modifica correctamente.
 Llamada: `AplicarAumentoGeneral(1.0)`
 
 - Representa un aumento del 100%, es decir, se duplica el precio.
-- `nuevoPrecio = precio * (1 + 1.0) = precio * 2`.
+- `factor = 1 + 1.0 = 2.0`, y el precio nuevo es `precio * 2.0` (por ejemplo, `10.0 * 2.0 = 20.00`).
 - Se aplica normalmente a cada nodo y se retorna la cantidad modificada.
 
 No se requiere validación adicional: el porcentaje sigue siendo válido aunque sea alto, siempre que se exprese como fracción decimal.
+
+### Caso borde 6: porcentaje `NaN` o infinito
+
+Llamadas: `AplicarAumentoGeneral(Double.NaN)` o `AplicarAumentoGeneral(Double.POSITIVE_INFINITY)`
+
+- Ningún valor cumple `porcentaje < 0` ni `porcentaje == 0.0`, así que ambas validaciones pasan.
+- `BigDecimal.valueOf(porcentaje)` lanza `NumberFormatException` al calcular el factor, antes de recorrer la lista.
+- Ningún precio se modifica, pero el error no se captura dentro del método.

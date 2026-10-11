@@ -9,7 +9,7 @@ Se tienen los siguientes elementos principales para construir el arreglo de prec
 | anterior | Puntero auxiliar usado por `invertir()` para reasignar los enlaces. |
 | siguiente | Puntero auxiliar usado por `invertir()` para no perder el resto de la lista. |
 | cantidad | Atributo de la lista que indica cuántos nodos tiene en total. |
-| arreglo | Arreglo auxiliar donde se almacenan los precios. |
+| arreglo | Arreglo auxiliar (`BigDecimal[]`, llamado `preciosInvertidos` en el código) donde se almacenan los precios. |
 | i | Índice que recorre el arreglo mientras se llena. |
 
 La operación se apoya en un método auxiliar `invertir()` que da vuelta la lista en su lugar. El método público sigue tres pasos:
@@ -34,6 +34,8 @@ Por eso, la corrección de `invertir()` y del ciclo intermedio es crítica: **no
 ### Tamaño correcto del arreglo
 
 En este método, el arreglo se crea con `arreglo[cantidad]`. Esto es correcto porque **cada nodo tiene exactamente un precio** y todos se incluyen en el resultado, sin filtros. Es lo contrario de lo que ocurría en `MedicamentosAgotados()`, donde solo algunos nodos cumplían la condición y el arreglo debía dimensionarse con el número de resultados, no con la cantidad total de nodos.
+
+**Dependencia del atributo `cantidad`:** el tamaño del arreglo se toma del atributo `cantidad` de la lista, no de un conteo de los nodos. Por eso `cantidad` debe mantenerse consistente con la cantidad real de nodos (en `Main` se asigna con `setCantidad`). Si fuera menor que el número real de nodos, el ciclo intermedio lanzaría `ArrayIndexOutOfBoundsException` y, al no ejecutarse la segunda inversión, la lista quedaría invertida de forma permanente: es exactamente el riesgo descrito en la sección anterior.
 
 ### Ausencia de casos borde especiales
 
@@ -71,7 +73,7 @@ PROCEDIMIENTO ListarPreciosInversos()
     actual = inicio
 
     CICLO (actual != null) {
-        arreglo[i] = actual.getPrecio()
+        arreglo[i] = actual.getDato().getPrecio()
         i++
         actual = actual.siguiente
     }
