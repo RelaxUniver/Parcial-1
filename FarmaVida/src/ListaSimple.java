@@ -34,8 +34,8 @@ public class ListaSimple {
     // Geonel Sánchez
      public BigDecimal PromedioPrecioPorCategoria(String categoria) {
 
-        if (categoria == null || categoria.trim().isEmpty()){
-            throw new IllegalArgumentException("La categoria no puede ser nula ni vacia");
+        if (categoria == null){
+            return 0.0;
         }
 
         Nodo actual = cabeza;
