@@ -31,10 +31,37 @@ public class ListaSimple {
     cuyo stock sea menor o igual a 5 unidades.
     */
 
-    /* Geonel Sánchez
-    b) PromedioPrecioPorCategoria(String categoria): Devuelve el precio 
-    promedio de los medicamentos de la categoría especificada (0.0 si no existen).
-    */
+    // Geonel Sánchez
+     public BigDecimal PromedioPrecioPorCategoria(String categoria) {
+
+        if (categoria == null || categoria.trim().isEmpty()){
+            throw new IllegalArgumentException("La categoria no puede ser nula ni vacia");
+        }
+
+        Nodo actual = cabeza;
+        BigDecimal sumaPrecios = BigDecimal.ZERO;
+        int cantidadMedicamentos = 0;
+
+        while (actual != null) {
+            if (actual.getDato().getCategoria().equals(categoria)) {
+                sumaPrecios = sumaPrecios.add(actual.getDato().getPrecio());
+                cantidadMedicamentos++;
+            }
+            actual = actual.getSiguiente();
+        }
+
+        if (cantidadMedicamentos == 0) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal promedio = sumaPrecios.divide(
+                BigDecimal.valueOf(cantidadMedicamentos),
+                2,
+                RoundingMode.HALF_UP
+        );
+
+        return promedio;
+    }
 
     /* Merlyn Sosa Borges
     c) ActualizarStock(String codigo, int cantidadAgregada): Busca un medicamento 
