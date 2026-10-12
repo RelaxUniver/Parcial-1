@@ -83,10 +83,35 @@ public class ListaSimple {
         return promedio;
     }
 
-    /* Merlyn Sosa Borges
-    c) ActualizarStock(String codigo, int cantidadAgregada): Busca un medicamento 
-    por su código y le suma la cantidad entregada. Devuelve true si existe y false si no.
-    */
+    // Merlyn Sosa Borges
+        public boolean ActualizarStock(String codigo, int cantidadAgregada) {
+
+        if (codigo == null) {
+            System.out.println("El código no existe, no se realizarán cambios ");
+            return false;
+        }
+
+        if (cantidadAgregada < 0) {
+            System.out.println("La cantidad es negativa, se rechaza la solicitud");
+            return false;
+        }
+
+        Nodo actual = inicio;
+
+        while (actual != null) {
+
+            if (actual.getDato().getCodigo().equals(codigo)) {
+                int aumento = actual.getDato().getStock() + cantidadAgregada;
+                actual.getDato().setStock(aumento);
+                return true;
+            }
+
+            actual = actual.getSiguiente();
+        }
+
+        System.out.println("Medicamento no encontrado");
+        return false;
+    }
 
     // Yaisel Pinos Durán
     private void invertir() {
