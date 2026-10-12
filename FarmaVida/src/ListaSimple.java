@@ -27,10 +27,33 @@ public class ListaSimple {
         this.cantidad = cantidad;
     }
 
-    /* Jorge Luis Reyes Pérez
-    a) MedicamentosAgotados(): Devuelve los nombres de los medicamentos 
-    cuyo stock sea menor o igual a 5 unidades.
-    */
+    // Jorge Luis Reyes Pérez
+    public String[] MedicamentosAgotados(){
+        Nodo cursor=inicio;
+        int contador=0;
+        if(inicio == null){
+            return new String[0];
+        }
+        
+        while (cursor != null){
+            if (cursor.getDato().getStock() <= 5){
+                contador++;
+            }
+            cursor=cursor.getSiguiente();
+        }
+        String[] aux=new String[contador];
+        cursor=inicio;
+        int posicionAux=0;
+        while (cursor != null){
+            if (cursor.getDato().getStock() <= 5){
+                aux[posicionAux]=cursor.getDato().getNombre();
+                posicionAux++;
+            }
+            cursor=cursor.getSiguiente();
+        }
+
+        return aux;
+    }
 
     // Geonel Sánchez
      public BigDecimal PromedioPrecioPorCategoria(String categoria) {
