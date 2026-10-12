@@ -8,7 +8,6 @@ public class Main {
         // ============================================================
         // a) MedicamentosAgotados()
         // ============================================================
-        /*
         {
             Nodo n5 = new Nodo(new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
             Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")), n5);
@@ -68,7 +67,6 @@ public class Main {
             System.out.println("DESPUÉS: Y01(stock=3) → Y02(stock=5) → Y03(stock=1) (sin cambios)");
             System.out.println("Resultado: " + Arrays.toString(a4) + "\n");
         }
-        */
 
         // b) PromedioPrecioPorCategoria(String categoria)
 
@@ -129,7 +127,6 @@ public class Main {
         // ============================================================
         // c) ActualizarStock(String codigo, int cantidadAgregada)
         // ============================================================
-        /*
         {
             Nodo n5 = new Nodo(new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
             Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")), n5);
@@ -190,8 +187,17 @@ public class Main {
             boolean c6 = listaVacia.ActualizarStock("M01", 10);
             System.out.println("DESPUÉS: (lista vacía, sin cambios)");
             System.out.println("Resultado: " + c6 + "\n");
+
+            Medicamento medicamentoLimite = new Medicamento("MMAX", "Stock máximo", Categoria.VITAMINA, Integer.MAX_VALUE, new BigDecimal("1.00"));
+            ListaSimple listaLimite = new ListaSimple();
+            listaLimite.setInicio(new Nodo(medicamentoLimite, null));
+            System.out.println("--- Caso borde: suma excede el stock máximo ---");
+            System.out.println("Llamada: ActualizarStock(\"MMAX\", 1)");
+            System.out.println("Esperado: false, stock sin cambios");
+            boolean c7 = listaLimite.ActualizarStock("MMAX", 1);
+            System.out.println("Stock después: " + medicamentoLimite.getStock());
+            System.out.println("Resultado: " + c7 + "\n");
         }
-        */
 
         // d) ListarPreciosInversos()
 
@@ -236,6 +242,22 @@ public class Main {
             BigDecimal[] d3 = listaUnNodo.ListarPreciosInversos();
             System.out.println("DESPUÉS: Z01(7.25) (restaurada)");
             System.out.println("Resultado: " + Arrays.toString(d3) + "\n");
+
+            Nodo q2 = new Nodo(new Medicamento("Q02", "MedQ2", Categoria.VITAMINA, 1, new BigDecimal("2.00")), null);
+            Nodo q1 = new Nodo(new Medicamento("Q01", "MedQ1", Categoria.VITAMINA, 1, new BigDecimal("1.00")), q2);
+            ListaSimple listaConteoBajo = new ListaSimple();
+            listaConteoBajo.setInicio(q1);
+            listaConteoBajo.setCantidad(1);
+            System.out.println("--- Caso borde: cantidad menor al número de nodos ---");
+            System.out.println("Esperado: [2.00, 1.00], lista restaurada");
+            BigDecimal[] d4 = listaConteoBajo.ListarPreciosInversos();
+            System.out.println("Resultado: " + Arrays.toString(d4) + ", inicio restaurado=" + (listaConteoBajo.getInicio() == q1) + "\n");
+
+            listaConteoBajo.setCantidad(3);
+            System.out.println("--- Caso borde: cantidad mayor al número de nodos ---");
+            System.out.println("Esperado: [2.00, 1.00]");
+            BigDecimal[] d5 = listaConteoBajo.ListarPreciosInversos();
+            System.out.println("Resultado: " + Arrays.toString(d5) + "\n");
         }
 
         // e) AplicarAumentoGeneral(double porcentaje)
@@ -297,6 +319,16 @@ public class Main {
             int e5 = listaUnNodo.AplicarAumentoGeneral(0.10);
             System.out.println("DESPUÉS: Z01(7.975)");
             System.out.println("Resultado: " + e5 + "\n");
+
+            System.out.println("--- Caso negativo: porcentaje NaN ---");
+            System.out.println("Esperado: 0, precios sin cambios");
+            int e6 = lista.AplicarAumentoGeneral(Double.NaN);
+            System.out.println("Resultado: " + e6 + "\n");
+
+            System.out.println("--- Caso negativo: porcentaje infinito ---");
+            System.out.println("Esperado: 0, precios sin cambios");
+            int e7 = lista.AplicarAumentoGeneral(Double.POSITIVE_INFINITY);
+            System.out.println("Resultado: " + e7 + "\n");
         }
         
     }

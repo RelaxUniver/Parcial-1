@@ -32,6 +32,32 @@ public class ListaSimple {
     cuyo stock sea menor o igual a 5 unidades.
     */
 
+    public String[] MedicamentosAgotados() {
+
+        int agotados = 0;
+        Nodo actual = inicio;
+
+        while (actual != null) {
+            if (actual.getDato().getStock() <= 5) {
+                agotados++;
+            }
+            actual = actual.getSiguiente();
+        }
+
+        String[] nombresAgotados = new String[agotados];
+        int indice = 0;
+        actual = inicio;
+
+        while (actual != null) {
+            if (actual.getDato().getStock() <= 5) {
+                nombresAgotados[indice++] = actual.getDato().getNombre();
+            }
+            actual = actual.getSiguiente();
+        }
+
+        return nombresAgotados;
+    }
+
     // Geonel Sánchez
      public BigDecimal PromedioPrecioPorCategoria(String categoria) {
 
@@ -82,8 +108,12 @@ public class ListaSimple {
         while (actual != null) {
 
             if (actual.getDato().getCodigo().equals(codigo)) {
-                int aumento = actual.getDato().getStock() + cantidadAgregada;
-                actual.getDato().setStock(aumento);
+                long aumento = (long) actual.getDato().getStock() + cantidadAgregada;
+                if (actual.getDato().getStock() < 0 || aumento > Integer.MAX_VALUE) {
+                    System.out.println("El stock excede el máximo permitido");
+                    return false;
+                }
+                actual.getDato().setStock((int) aumento);
                 return true;
             }
 
@@ -112,10 +142,17 @@ public class ListaSimple {
 
     public BigDecimal[] ListarPreciosInversos() {
 
-        invertir();
-        BigDecimal[] preciosInvertidos = new BigDecimal[cantidad];
-        int i = 0;
+        int cantidadNodos = 0;
         Nodo actual = inicio;
+        while (actual != null) {
+            cantidadNodos++;
+            actual = actual.getSiguiente();
+        }
+
+        invertir();
+        BigDecimal[] preciosInvertidos = new BigDecimal[cantidadNodos];
+        int i = 0;
+        actual = inicio;
 
         while(actual != null) {
             preciosInvertidos[i++] = actual.getDato().getPrecio();
@@ -130,6 +167,11 @@ public class ListaSimple {
 
     // Ray Sanjudo Mesa
     public int AplicarAumentoGeneral(double porcentaje) {
+
+        if (!Double.isFinite(porcentaje)) {
+            System.out.println("El porcentaje debe ser un número finito");
+            return 0;
+        }
 
         if (porcentaje < 0) {
             System.out.println("El porcentaje no puede ser negativo");

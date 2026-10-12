@@ -46,22 +46,37 @@ public class Medicamento {
 	}
 
 	public void setCodigo(String codigo) {
+		if (codigo == null) {
+			throw new IllegalArgumentException("El código no puede ser null.");
+		}
 		this.codigo = codigo;
 	}
 
 	public void setNombre(String nombre) {
+		if (nombre == null) {
+			throw new IllegalArgumentException("El nombre no puede ser null.");
+		}
 		this.nombre = nombre;
 	}
 
 	public void setCategoria(Categoria categoria) {
+		if (categoria == null) {
+			throw new IllegalArgumentException("La categoría no puede ser null.");
+		}
 		this.categoria = categoria;
 	}
 
 	public void setStock(int stock) {
+		if (stock < 0) {
+			throw new IllegalArgumentException("No se permite stock negativo.");
+		}
 		this.stock = stock;
 	}
 
 	public void setPrecio(BigDecimal precio) {
+		if (precio == null || precio.signum() < 0) {
+			throw new IllegalArgumentException("No se permite precio null ni negativo.");
+		}
 		this.precio = precio;
 	}
     
