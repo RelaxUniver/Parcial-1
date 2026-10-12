@@ -27,13 +27,15 @@ Al final se devuelve el arreglo con los precios en orden inverso al que fueron i
 El método modifica temporalmente la lista original para aprovechar el recorrido natural de la estructura y luego la restaura. Esto tiene dos consecuencias importantes:
 
 - **Ventaja:** no se necesita memoria extra para guardar una copia de la lista. El arreglo de precios se construye sobre la lista ya invertida.
-- **Riesgo:** la restauración depende de que la segunda llamada a `invertir()` se ejecute. El arreglo se dimensiona contando los nodos reales antes de invertir, por lo que un valor incorrecto en el atributo `cantidad` ya no causa un desbordamiento del arreglo durante la extracción.
+- **Riesgo:** la restauración depende de que la segunda llamada a `invertir()` se ejecute. Si el ciclo intermedio falla, la lista queda invertida de forma permanente, alterando el estado que el resto del sistema espera encontrar.
 
 Por eso, la corrección de `invertir()` y del ciclo intermedio es crítica: **no basta con que la primera inversión funcione, ambas deben funcionar siempre**.
 
 ### Tamaño correcto del arreglo
 
-En este método, el arreglo se crea con el número real de nodos contado al recorrer la lista. **Cada nodo tiene exactamente un precio** y todos se incluyen en el resultado, sin filtros. El atributo `cantidad` no se usa para dimensionar el arreglo, así que un valor desactualizado no agrega posiciones `null` ni causa `ArrayIndexOutOfBoundsException`.
+En este método, el arreglo se crea con `arreglo[cantidad]`. Esto es correcto porque **cada nodo tiene exactamente un precio** y todos se incluyen en el resultado, sin filtros. Es lo contrario de lo que ocurría en `MedicamentosAgotados()`, donde solo algunos nodos cumplían la condición y el arreglo debía dimensionarse con el número de resultados, no con la cantidad total de nodos.
+
+**Dependencia del atributo `cantidad`:** el tamaño del arreglo se toma del atributo `cantidad` de la lista, no de un conteo de los nodos. Por eso `cantidad` debe mantenerse consistente con la cantidad real de nodos (en `Main` se asigna con `setCantidad`). Si fuera menor que el número real de nodos, el ciclo intermedio lanzaría `ArrayIndexOutOfBoundsException` y, al no ejecutarse la segunda inversión, la lista quedaría invertida de forma permanente: es exactamente el riesgo descrito en la sección anterior.
 
 ### Ausencia de casos borde especiales
 
@@ -64,16 +66,9 @@ FIN PROCEDIMIENTO
 
 PROCEDIMIENTO ListarPreciosInversos()
 
-    cantidadNodos = 0
-    actual = inicio
-    CICLO (actual != null) {
-        cantidadNodos++
-        actual = actual.siguiente
-    }
-
     invertir()
 
-    arreglo = nuevo arreglo de tamaño cantidadNodos
+    arreglo = nuevo arreglo de tamaño cantidad
     i = 0
     actual = inicio
 

@@ -62,7 +62,7 @@ El valor es numéricamente el mismo que se obtendría redondeando (`2.750` equiv
 
 ### Valores no numéricos
 
-El método rechaza `Double.NaN` y los infinitos con un mensaje y retorna `0` antes de recorrer la lista. Así evita que `BigDecimal.valueOf(porcentaje)` lance `NumberFormatException` y garantiza que ningún precio cambie.
+El método no valida `Double.NaN` ni `Double.POSITIVE_INFINITY`. Ninguno de los dos cumple `porcentaje < 0` ni `porcentaje == 0.0`, por lo que superan las validaciones y `BigDecimal.valueOf(porcentaje)` lanza `NumberFormatException`.
 
 ### Contador redundante con la lógica actual
 
@@ -72,11 +72,6 @@ Como los porcentajes `0` y negativos se rechazan al inicio, todos los nodos que 
 
 ```
 PROCEDIMIENTO AplicarAumentoGeneral(porcentaje)
-
-    SI (porcentaje no es finito) ENTONCES
-        ESCRIBIR "El porcentaje debe ser un número finito"
-        RETORNAR 0
-    FIN SI
 
     SI (porcentaje < 0) ENTONCES
         ESCRIBIR "El porcentaje no puede ser negativo"
@@ -307,5 +302,6 @@ No se requiere validación adicional: el porcentaje sigue siendo válido aunque 
 
 Llamadas: `AplicarAumentoGeneral(Double.NaN)` o `AplicarAumentoGeneral(Double.POSITIVE_INFINITY)`
 
-- El método detecta que el porcentaje no es finito, imprime `"El porcentaje debe ser un número finito"` y retorna `0`.
-- La validación ocurre antes del recorrido; ningún precio se modifica y no se lanza una excepción.
+- Ningún valor cumple `porcentaje < 0` ni `porcentaje == 0.0`, así que ambas validaciones pasan.
+- `BigDecimal.valueOf(porcentaje)` lanza `NumberFormatException` al calcular el factor, antes de recorrer la lista.
+- Ningún precio se modifica, pero el error no se captura dentro del método.

@@ -14,22 +14,20 @@ La operación consiste en recorrer la lista desde el inicio hasta `null`, compar
 
 ## 2. Aviso Importante
 
-### Significados del valor `false`
+### Triple significado del valor `false`
 
-El método devuelve `false` en cuatro situaciones distintas:
+El método devuelve `false` en **tres situaciones distintas**:
 
 1. El código recibido es `null`.
 2. La cantidad recibida es negativa (no tiene sentido restar stock con este método).
 3. El medicamento con ese código no existe en la lista.
-4. La suma excedería `Integer.MAX_VALUE`, el mayor stock representable por el tipo `int`.
 
-Como todos los casos devuelven el mismo valor booleano, quien llame al método no puede distinguirlos solo con el retorno. Por eso, se imprime un mensaje informativo antes de retornar:
+Como los tres casos devuelven el mismo valor booleano, quien llame al método no puede distinguirlos solo con el retorno. Por eso, en cada caso se imprime un mensaje informativo antes de retornar:
 
 ```
-ESCRIBIR "El código no existe, no se realizarán cambios"
+ESCRIBIR "El código es null, se rechaza la solicitud"
 ESCRIBIR "La cantidad es negativa, se rechaza la solicitud"
 ESCRIBIR "Medicamento no encontrado"
-ESCRIBIR "El stock excede el máximo permitido"
 ```
 
 Esto no cambia el retorno, pero le permite al usuario saber qué pasó realmente.
@@ -40,7 +38,7 @@ Esto no cambia el retorno, pero le permite al usuario saber qué pasó realmente
 PROCEDIMIENTO ActualizarStock(codigo, cantidadAgregada)
 
     SI (codigo == null) ENTONCES
-        ESCRIBIR "El código no existe, no se realizarán cambios"
+        ESCRIBIR "El código es null, se rechaza la solicitud"
         RETORNAR false
     FIN SI
 
@@ -54,12 +52,8 @@ PROCEDIMIENTO ActualizarStock(codigo, cantidadAgregada)
     CICLO (actual != null) {
 
         SI (actual.getCodigo().equals(codigo)) ENTONCES
-            aumento = actual.getStock() + cantidadAgregada usando un tipo que no desborde
-            SI (aumento > Integer.MAX_VALUE) ENTONCES
-                ESCRIBIR "El stock excede el máximo permitido"
-                RETORNAR false
-            FIN SI
-            actual.setStock((int) aumento)
+            aumento = actual.getStock() + cantidadAgregada
+            actual.setStock(aumento)
             RETORNAR true
         FIN SI
 
@@ -213,12 +207,12 @@ La lista queda intacta.
 
 ```
 SI (codigo == null) ENTONCES
-    ESCRIBIR "El código no existe, no se realizarán cambios"
+    ESCRIBIR "El código es null, se rechaza la solicitud"
     RETORNAR false
 FIN SI
 ```
 
-Si el código es `null`, no tiene sentido recorrer la lista buscando coincidencias. Esta guard clause se coloca al inicio del método y devuelve `false` inmediatamente, imprimiendo el mensaje correspondiente.
+Si el código es null, no tiene sentido recorrer la lista buscando coincidencias. Esta guard clause se coloca al inicio del método y devuelve `false` inmediatamente, imprimiendo el mensaje correspondiente.
 
 ### Caso borde 4: cantidad negativa
 
@@ -237,7 +231,3 @@ Llamada: `ActualizarStock("c2", 0)`
 - Si existe, `aumento = stock + 0 = stock`, se asigna el mismo valor y retorna `true`.
 
 Es una operación sin efecto real, pero válida: el stock no cambia y el método confirma que el medicamento existe.
-
-### Caso borde 6: suma superior al máximo de `int`
-
-Si el stock actual más `cantidadAgregada` supera `Integer.MAX_VALUE`, el método imprime `"El stock excede el máximo permitido"`, retorna `false` y conserva el stock original. La suma se calcula como `long` antes de convertirla a `int`, para evitar que el desbordamiento produzca un stock negativo.

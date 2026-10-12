@@ -32,32 +32,6 @@ public class ListaSimple {
     cuyo stock sea menor o igual a 5 unidades.
     */
 
-    public String[] MedicamentosAgotados() {
-
-        int agotados = 0;
-        Nodo actual = inicio;
-
-        while (actual != null) {
-            if (actual.getDato().getStock() <= 5) {
-                agotados++;
-            }
-            actual = actual.getSiguiente();
-        }
-
-        String[] nombresAgotados = new String[agotados];
-        int indice = 0;
-        actual = inicio;
-
-        while (actual != null) {
-            if (actual.getDato().getStock() <= 5) {
-                nombresAgotados[indice++] = actual.getDato().getNombre();
-            }
-            actual = actual.getSiguiente();
-        }
-
-        return nombresAgotados;
-    }
-
     // Geonel Sánchez
      public BigDecimal PromedioPrecioPorCategoria(String categoria) {
 
@@ -91,39 +65,6 @@ public class ListaSimple {
     por su código y le suma la cantidad entregada. Devuelve true si existe y false si no.
     */
 
-    public boolean ActualizarStock(String codigo, int cantidadAgregada) {
-
-        if (codigo == null) {
-            System.out.println("El código no existe, no se realizarán cambios ");
-            return false;
-        }
-
-        if (cantidadAgregada < 0) {
-            System.out.println("La cantidad es negativa, se rechaza la solicitud");
-            return false;
-        }
-
-        Nodo actual = inicio;
-
-        while (actual != null) {
-
-            if (actual.getDato().getCodigo().equals(codigo)) {
-                long aumento = (long) actual.getDato().getStock() + cantidadAgregada;
-                if (actual.getDato().getStock() < 0 || aumento > Integer.MAX_VALUE) {
-                    System.out.println("El stock excede el máximo permitido");
-                    return false;
-                }
-                actual.getDato().setStock((int) aumento);
-                return true;
-            }
-
-            actual = actual.getSiguiente();
-        }
-
-        System.out.println("Medicamento no encontrado");
-        return false;
-    }
-
     // Yaisel Pinos Durán
     private void invertir() {
 
@@ -142,17 +83,10 @@ public class ListaSimple {
 
     public BigDecimal[] ListarPreciosInversos() {
 
-        int cantidadNodos = 0;
-        Nodo actual = inicio;
-        while (actual != null) {
-            cantidadNodos++;
-            actual = actual.getSiguiente();
-        }
-
         invertir();
-        BigDecimal[] preciosInvertidos = new BigDecimal[cantidadNodos];
+        BigDecimal[] preciosInvertidos = new BigDecimal[cantidad];
         int i = 0;
-        actual = inicio;
+        Nodo actual = inicio;
 
         while(actual != null) {
             preciosInvertidos[i++] = actual.getDato().getPrecio();
@@ -167,11 +101,6 @@ public class ListaSimple {
 
     // Ray Sanjudo Mesa
     public int AplicarAumentoGeneral(double porcentaje) {
-
-        if (!Double.isFinite(porcentaje)) {
-            System.out.println("El porcentaje debe ser un número finito");
-            return 0;
-        }
 
         if (porcentaje < 0) {
             System.out.println("El porcentaje no puede ser negativo");
