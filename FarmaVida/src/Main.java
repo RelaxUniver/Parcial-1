@@ -5,8 +5,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // a) MedicamentosAgotados()
-
         {
             Nodo n5 = new Nodo(
                     new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
@@ -72,8 +70,6 @@ public class Main {
             System.out.println("Resultado: " + Arrays.toString(a4) + "\n");
         }
 
-        // b) PromedioPrecioPorCategoria(String categoria)
-
         {
             Nodo n5 = new Nodo(
                     new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
@@ -132,8 +128,6 @@ public class Main {
             System.out.println("DESPUÉS: M01 → M02 → M03 → M04 → M05 (sin cambios)");
             System.out.println("Resultado: " + b5 + "\n");
         }
-
-        // c) ActualizarStock(String codigo, int cantidadAgregada)
 
         {
             Nodo n5 = new Nodo(
@@ -216,8 +210,6 @@ public class Main {
             System.out.println("Resultado: " + c7 + "\n");
         }
 
-        // d) ListarPreciosInversos()
-
         {
             Nodo n5 = new Nodo(
                     new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
@@ -279,8 +271,6 @@ public class Main {
             System.out.println("DESPUÉS: lista restaurada = " + (listaDesfasada.getInicio() == q1));
             System.out.println("Resultado: " + Arrays.toString(d4) + "\n");
         }
-
-        // e) AplicarAumentoGeneral(double porcentaje)
 
         {
             Nodo n5 = new Nodo(

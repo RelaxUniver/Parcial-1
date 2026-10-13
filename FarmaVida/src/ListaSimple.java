@@ -27,7 +27,6 @@ public class ListaSimple {
         this.cantidad = cantidad;
     }
 
-    // Jorge Luis Reyes Pérez
     public String[] MedicamentosAgotados() {
         Nodo cursor = inicio;
         int contador = 0;
@@ -55,7 +54,6 @@ public class ListaSimple {
         return aux;
     }
 
-    // Geonel Sánchez
     public BigDecimal PromedioPrecioPorCategoria(String categoria) {
 
         if (categoria == null) {
@@ -83,7 +81,6 @@ public class ListaSimple {
         return promedio;
     }
 
-    // Merlyn Sosa Borges
     public boolean ActualizarStock(String codigo, int cantidadAgregada) {
 
         if (codigo == null) {
@@ -117,7 +114,6 @@ public class ListaSimple {
         return false;
     }
 
-    // Yaisel Pinos Durán
     private void invertir() {
 
         Nodo actual = this.inicio;
@@ -160,7 +156,6 @@ public class ListaSimple {
 
     }
 
-    // Ray Sanjudo Mesa
     public int AplicarAumentoGeneral(double porcentaje) {
 
         if (!Double.isFinite(porcentaje)) {
