@@ -5,10 +5,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // ============================================================
         // a) MedicamentosAgotados()
-        // ============================================================
-        /*
+
         {
             Nodo n5 = new Nodo(new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
             Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")), n5);
@@ -68,7 +66,6 @@ public class Main {
             System.out.println("DESPUÉS: Y01(stock=3) → Y02(stock=5) → Y03(stock=1) (sin cambios)");
             System.out.println("Resultado: " + Arrays.toString(a4) + "\n");
         }
-        */
 
         // b) PromedioPrecioPorCategoria(String categoria)
 
@@ -126,10 +123,8 @@ public class Main {
             System.out.println("Resultado: " + b5 + "\n");
         }
 
-        // ============================================================
         // c) ActualizarStock(String codigo, int cantidadAgregada)
-        // ============================================================
-        /*
+    
         {
             Nodo n5 = new Nodo(new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
             Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")), n5);
@@ -191,7 +186,6 @@ public class Main {
             System.out.println("DESPUÉS: (lista vacía, sin cambios)");
             System.out.println("Resultado: " + c6 + "\n");
         }
-        */
 
         // d) ListarPreciosInversos()
 
