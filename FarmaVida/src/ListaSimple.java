@@ -145,7 +145,7 @@ public class ListaSimple {
 
         invertir();
 
-        BigDecimal[] preciosInvertidos = new BigDecimal[cantidad];
+        BigDecimal[] preciosInvertidos = new BigDecimal[totalNodos];
         int i = 0;
         actual = inicio;
 
