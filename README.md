@@ -9,7 +9,7 @@ Aplicación de consola desarrollada en **Java** (solo JDK estándar) que adminis
 [![Java](https://img.shields.io/badge/Java-8%2B-007396?style=flat-square&logo=openjdk&logoColor=white)](https://www.java.com/es/)
 [![VS Code](https://img.shields.io/badge/VS%20Code-0078D4?style=flat-square&logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
 [![Estructura](https://img.shields.io/badge/Estructura-Lista%20Simplemente%20Enlazada-2E8B57?style=flat-square)](FarmaVida/src/ListaSimple.java)
-[![Estado](https://img.shields.io/badge/Estado-En%20desarrollo-orange?style=flat-square)](#estado-del-proyecto)
+[![Estado](https://img.shields.io/badge/Estado-5%2F5%20operaciones-green?style=flat-square)](#estado-del-proyecto)
 [![Último commit](https://img.shields.io/github/last-commit/RelaxUniver/Parcial-1?style=flat-square)](https://github.com/RelaxUniver/Parcial-1/commits/master/)
 
 </div>
@@ -42,7 +42,7 @@ Aplicación de consola desarrollada en **Java** (solo JDK estándar) que adminis
   - [Convenciones de Diseño](#convenciones-de-diseño)
   - [Estado del Proyecto](#estado-del-proyecto)
     - [Progreso](#progreso)
-    - [Flujo de trabajo para completar una operación pendiente](#flujo-de-trabajo-para-completar-una-operación-pendiente)
+    - [Flujo de trabajo seguido para completar cada operación](#flujo-de-trabajo-seguido-para-completar-cada-operación)
     - [Observaciones conocidas](#observaciones-conocidas)
   - [Equipo de Trabajo](#equipo-de-trabajo)
   - [Contacto](#contacto)
@@ -99,6 +99,8 @@ Cada operación cuenta con dos artefactos que la respaldan:
 ```text
 Parcial-1/
 ├── README.md                                ← Este archivo (portal del proyecto)
+├── .gitignore                               ← Excluye bin/, *.class, *.jar y archivos de IDE
+├── .gitattributes                           ← Finales de línea LF para los archivos de texto
 │
 ├── Documentación/                           ← Documentación técnica y material de apoyo
 │   ├── Lógica_ActualizarStock.md
@@ -122,17 +124,19 @@ Parcial-1/
     └── bin/                                 ← Clases compiladas (.class); se genera al compilar y no se versiona
 ```
 
-> **Nota sobre `bin/`:** esta carpeta ya no forma parte del repositorio: la genera VS Code (o el comando `javac`) al compilar el proyecto (ver [Cómo Ejecutar el Proyecto](#cómo-ejecutar-el-proyecto)). El repositorio no incluye un `.gitignore`, por lo que tras compilar, `bin/` aparecerá como carpeta sin seguimiento.
+> **Nota sobre `bin/`:** esta carpeta ya no forma parte del repositorio: la genera VS Code (o el comando `javac`) al compilar el proyecto (ver [Cómo Ejecutar el Proyecto](#cómo-ejecutar-el-proyecto)). El [`.gitignore`](.gitignore) de la raíz excluye `bin/`, `*.class` y `*.jar`, por lo que los artefactos de compilación no aparecen como cambios sin seguimiento.
 
 ### Detalle de archivos
 
 | Archivo | Descripción |
 |---|---|
+| [`.gitignore`](.gitignore) | Excluye del control de versiones los artefactos de compilación (`bin/`, `target/`, `out/`, `*.class`, `*.jar`) y los archivos de IDE (`.idea/`, `*.iml`). |
+| [`.gitattributes`](.gitattributes) | Unifica los finales de línea (LF) de los archivos de texto y marca `*.jar` y `*.pdf` como binarios. |
 | [`Documentación/`](Documentaci%C3%B3n/) | Cinco documentos de lógica (uno por operación), dos guías de Java y el informe del equipo. Ver [Documentación de Lógica](#documentación-de-lógica) y [Material de Apoyo](#material-de-apoyo). |
 | [`FarmaVida/src/Categoria.java`](FarmaVida/src/Categoria.java) | `enum` con las 4 categorías del inventario: `ANALGÉSICO`, `ANTIBIÓTICO`, `ANTIINFLAMATORIO` y `VITAMINA`. |
 | [`FarmaVida/src/Medicamento.java`](FarmaVida/src/Medicamento.java) | Clase de dominio con los atributos `codigo`, `nombre`, `categoria`, `stock` (`int`) y `precio` (`BigDecimal`). El constructor valida que ningún campo sea `null` y que no existan stock ni precios negativos. Incluye *getters* y *setters*. |
 | [`FarmaVida/src/Nodo.java`](FarmaVida/src/Nodo.java) | Nodo de la lista: envuelve un `Medicamento` (`dato`) y un enlace al siguiente nodo (`siguiente`). |
-| [`FarmaVida/src/ListaSimple.java`](FarmaVida/src/ListaSimple.java) | Lista simplemente enlazada con `inicio` y `cantidad`. Contiene las operaciones implementadas `PromedioPrecioPorCategoria()`, `ListarPreciosInversos()` (con su método auxiliar privado `invertir()`) y `AplicarAumentoGeneral()`, y los comentarios que reservan en el código el lugar de las operaciones pendientes (a y c). |
+| [`FarmaVida/src/ListaSimple.java`](FarmaVida/src/ListaSimple.java) | Lista simplemente enlazada con `inicio` y `cantidad`. Contiene las cinco operaciones del inventario implementadas: `MedicamentosAgotados()`, `PromedioPrecioPorCategoria()`, `ActualizarStock()`, `ListarPreciosInversos()` (con su método auxiliar privado `invertir()`) y `AplicarAumentoGeneral()`. |
 | [`FarmaVida/src/Main.java`](FarmaVida/src/Main.java) | Punto de entrada: ejecuta la batería de pruebas, un bloque independiente por operación (ver [Batería de Casos de Prueba](#batería-de-casos-de-prueba)). |
 | [`FarmaVida/.vscode/settings.json`](FarmaVida/.vscode/settings.json) | Configuración del proyecto Java en VS Code: `sourcePaths: ["src"]`, `outputPath: "bin"` y `referencedLibraries: ["lib/**/*.jar"]` (la carpeta `lib/` no existe porque no hay dependencias). |
 | `FarmaVida/bin/` | Carpeta de salida de la compilación (`.class`). No está versionada: se genera al compilar. Ver la nota anterior. |
@@ -155,7 +159,9 @@ classDiagram
         +getCantidad() int
         +setInicio(Nodo) void
         +setCantidad(int) void
+        +MedicamentosAgotados() String[]
         +PromedioPrecioPorCategoria(String) BigDecimal
+        +ActualizarStock(String, int) boolean
         +ListarPreciosInversos() BigDecimal[]
         +AplicarAumentoGeneral(double) int
         -invertir() void
@@ -198,8 +204,6 @@ classDiagram
         VITAMINA
     }
 
-    note for ListaSimple "Pendientes de implementar:\nMedicamentosAgotados()\nActualizarStock(String, int)"
-
     ListaSimple "1" --> "0..*" Nodo : inicio
     Nodo --> Nodo : siguiente
     Nodo "1" --> "1" Medicamento : dato
@@ -229,13 +233,13 @@ Las cinco operaciones pertenecen a [`ListaSimple`](FarmaVida/src/ListaSimple.jav
 
 | # | Firma del método | Descripción | Retorna | Responsable | Documentación | Estado |
 |:---:|---|---|---|---|---|---|
-| **a** | `MedicamentosAgotados()` | Devuelve los nombres de los medicamentos cuyo stock sea **menor o igual a 5** unidades. | `String[]` | Jorge Luis Reyes Pérez | [Lógica_MedicamentosAgotados.md](Documentaci%C3%B3n/L%C3%B3gica_MedicamentosAgotados.md) | Documentada; pendiente de implementar |
+| **a** | `MedicamentosAgotados()` | Devuelve los nombres de los medicamentos cuyo stock sea **menor o igual a 5** unidades. | `String[]` | Jorge Luis Reyes Pérez | [Lógica_MedicamentosAgotados.md](Documentaci%C3%B3n/L%C3%B3gica_MedicamentosAgotados.md) | Implementada; pruebas activas |
 | **b** | `PromedioPrecioPorCategoria(String categoria)` | Devuelve el precio promedio de los medicamentos de la categoría indicada por su nombre (p. ej. `"ANTIBIÓTICO"`), con 2 decimales; `0.0` si no existen. | `BigDecimal` | Geonel Sánchez | [Lógica_PromedioPrecioPorCategoria.md](Documentaci%C3%B3n/L%C3%B3gica_PromedioPrecioPorCategoria.md) | Implementada; pruebas activas |
-| **c** | `ActualizarStock(String codigo, int cantidadAgregada)` | Busca un medicamento por su código y le suma la cantidad entregada. | `boolean` (`true` si existe) | Merlyn Sosa Borges | [Lógica_ActualizarStock.md](Documentaci%C3%B3n/L%C3%B3gica_ActualizarStock.md) | Documentada; pendiente de implementar |
+| **c** | `ActualizarStock(String codigo, int cantidadAgregada)` | Busca un medicamento por su código y le suma la cantidad entregada. | `boolean` (`true` si existe) | Merlyn Sosa Borges | [Lógica_ActualizarStock.md](Documentaci%C3%B3n/L%C3%B3gica_ActualizarStock.md) | Implementada; pruebas activas |
 | **d** | `ListarPreciosInversos()` | Devuelve los precios en **orden inverso** al que fueron ingresados, restaurando la lista original. | `BigDecimal[]` | Yaisel Pinos Durán | [Lógica_ListarPreciosInversos.md](Documentaci%C3%B3n/L%C3%B3gica_ListarPreciosInversos.md) | Implementada; pruebas activas |
 | **e** | `AplicarAumentoGeneral(double porcentaje)` | Incrementa el precio de **todos** los medicamentos según el porcentaje dado (fracción decimal: `0.25` = 25 %). | `int` (modificados) | Ray Sanjudo Mesa | [Lógica_AplicarAumentoGeneral.md](Documentaci%C3%B3n/L%C3%B3gica_AplicarAumentoGeneral.md) | Implementada; pruebas activas |
 
-> Los responsables constan como comentarios en [`ListaSimple.java`](FarmaVida/src/ListaSimple.java): un bloque con la firma y el propósito para cada operación pendiente (a y c) y una línea con el nombre sobre cada método ya implementado (b, d y e).
+> Los responsables constan como comentarios en [`ListaSimple.java`](FarmaVida/src/ListaSimple.java): una línea con el nombre del responsable sobre cada uno de los cinco métodos implementados (a–e).
 
 ---
 
@@ -253,13 +257,13 @@ La carpeta [`Documentación/`](Documentaci%C3%B3n/) contiene un documento Markdo
 
 | Documento | Operación | Puntos clave que aborda | Estado respecto al código |
 |---|---|---|---|
-| [Lógica_MedicamentosAgotados.md](Documentaci%C3%B3n/L%C3%B3gica_MedicamentosAgotados.md) | **(a)** Medicamentos agotados | Recorrido en **dos pasadas** (contar y luego llenar) para dimensionar el arreglo con el tamaño exacto del resultado y no con el de la lista. | Especificación; la operación aún no está implementada |
+| [Lógica_MedicamentosAgotados.md](Documentaci%C3%B3n/L%C3%B3gica_MedicamentosAgotados.md) | **(a)** Medicamentos agotados | Recorrido en **dos pasadas** (contar y luego llenar) para dimensionar el arreglo con el tamaño exacto del resultado y no con el de la lista. | Alineado con la implementación |
 | [Lógica_PromedioPrecioPorCategoria.md](Documentaci%C3%B3n/L%C3%B3gica_PromedioPrecioPorCategoria.md) | **(b)** Promedio por categoría | Prevención de la **división entre cero**, comparación entre el `enum` `Categoria` y el parámetro `String` mediante `name().equals(...)`, y aritmética con `BigDecimal` (escala 2 y `RoundingMode.HALF_UP`). | Alineado con la implementación |
-| [Lógica_ActualizarStock.md](Documentaci%C3%B3n/L%C3%B3gica_ActualizarStock.md) | **(c)** Actualizar stock | Búsqueda por código con retorno anticipado y el **triple significado de `false`** (código `null`, cantidad negativa, medicamento inexistente). | Especificación; la operación aún no está implementada |
+| [Lógica_ActualizarStock.md](Documentaci%C3%B3n/L%C3%B3gica_ActualizarStock.md) | **(c)** Actualizar stock | Búsqueda por código con retorno anticipado y el **triple significado de `false`** (código `null`, cantidad negativa, medicamento inexistente). | Alineado con la implementación |
 | [Lógica_ListarPreciosInversos.md](Documentaci%C3%B3n/L%C3%B3gica_ListarPreciosInversos.md) | **(d)** Precios en orden inverso | Patrón **mutar–extraer–restaurar** con el método auxiliar `invertir()`: la lista se invierte, se extraen los precios y se vuelve a invertir para dejarla intacta. Dependencia del atributo `cantidad`. | Alineado con la implementación |
 | [Lógica_AplicarAumentoGeneral.md](Documentaci%C3%B3n/L%C3%B3gica_AplicarAumentoGeneral.md) | **(e)** Aumento general de precios | Convención de **porcentaje como fracción decimal**, factor `BigDecimal` calculado una vez, mensajes en los retornos `0` por porcentaje negativo o cero, y escala de los precios resultantes. | Alineado con la implementación |
 
-Los documentos de las operaciones implementadas (b, d y e) se contrastaron con el código ejecutando sus ejemplos y casos borde. Los de (a) y (c) describen operaciones pendientes y deberán revisarse contra su implementación cuando exista.
+Los documentos de las cinco operaciones se contrastaron con el código ejecutando sus ejemplos y casos borde.
 
 ---
 
@@ -318,22 +322,51 @@ Cobertura actual por operación:
 
 | Operación | Positivos | Negativos | Borde | Estado del bloque en `Main.java` |
 |:---:|:---:|:---:|:---:|---|
-| **a** | 1 | 2 | 1 | Comentado |
+| **a** | 1 | 2 | 1 | **Activo** |
 | **b** | 2 | 3 | — | **Activo** |
-| **c** | 2 | 4 | — | Comentado |
+| **c** | 2 | 4 | — | **Activo** |
 | **d** | 1 | 1 | 1 | **Activo** |
 | **e** | 1 | 3 | 1 | **Activo** |
 
 > **Importante:**
-> - Los bloques de **a** y **c** están comentados (`/* ... */`) hasta que cada responsable implemente su método en [`ListaSimple.java`](FarmaVida/src/ListaSimple.java).
 > - Las pruebas no usan un framework (por ejemplo JUnit) ni aserciones automáticas: la verificación consiste en comparar visualmente la línea **Esperado** con la línea **Resultado**.
 > - Los textos **ANTES** y **DESPUÉS** son descriptivos (solo el bloque **c** consulta el stock real del objeto tras la llamada).
 
 ### Salida esperada al ejecutar la versión actual
 
-Se ejecutan los bloques activos (b, d y e). En los casos de (e) con porcentaje negativo o cero, el método imprime además su mensaje informativo antes del resultado.
+Se ejecutan los cinco bloques (a–e). En los casos rechazados de (c) y (e), el método imprime además su mensaje informativo antes del resultado.
 
 ```text
+=== a) MedicamentosAgotados() ===
+
+--- Caso positivo: algunos medicamentos agotados ---
+ANTES  : M01 → M02 → M03 → M04 → M05
+Llamada: MedicamentosAgotados()
+Esperado: [Amoxicilina, Ibuprofeno, Azitromicina]
+DESPUÉS: M01 → M02 → M03 → M04 → M05 (sin cambios)
+Resultado: [Amoxicilina, Ibuprofeno, Azitromicina]
+
+--- Caso negativo: lista vacía ---
+ANTES  : (lista vacía)
+Llamada: MedicamentosAgotados()
+Esperado: []
+DESPUÉS: (lista vacía, sin cambios)
+Resultado: []
+
+--- Caso negativo: ningún medicamento con stock <= 5 ---
+ANTES  : X01(stock=10) → X02(stock=20) → X03(stock=15)
+Llamada: MedicamentosAgotados()
+Esperado: []
+DESPUÉS: X01(stock=10) → X02(stock=20) → X03(stock=15) (sin cambios)
+Resultado: []
+
+--- Caso borde: todos los medicamentos agotados ---
+ANTES  : Y01(stock=3) → Y02(stock=5) → Y03(stock=1)
+Llamada: MedicamentosAgotados()
+Esperado: [MedD, MedE, MedF]
+DESPUÉS: Y01(stock=3) → Y02(stock=5) → Y03(stock=1) (sin cambios)
+Resultado: [MedD, MedE, MedF]
+
 === b) PromedioPrecioPorCategoria() ===
 
 --- Caso positivo: categoría con 2 medicamentos ---
@@ -370,6 +403,54 @@ Llamada: PromedioPrecioPorCategoria(null)
 Esperado: 0.0
 DESPUÉS: M01 → M02 → M03 → M04 → M05 (sin cambios)
 Resultado: 0.0
+
+=== c) ActualizarStock() ===
+
+--- Caso positivo: código existente (M02, 3 + 10) ---
+ANTES  : M02 (stock=3)
+Llamada: ActualizarStock("M02", 10)
+Esperado: true, stock después = 13
+DESPUÉS: M02 (stock=13)
+Resultado: true
+
+--- Caso positivo: cantidad cero ---
+ANTES  : M03 (stock=2)
+Llamada: ActualizarStock("M03", 0)
+Esperado: true, stock después = 2
+DESPUÉS: M03 (stock=2)
+Resultado: true
+
+--- Caso negativo: código inexistente ---
+ANTES  : M01 → M02 → M03 → M04 → M05
+Llamada: ActualizarStock("M99", 10)
+Esperado: false
+Medicamento no encontrado
+DESPUÉS: M01 → M02 → M03 → M04 → M05 (sin cambios)
+Resultado: false
+
+--- Caso negativo: cantidad negativa ---
+ANTES  : M02 (stock=13)
+Llamada: ActualizarStock("M02", -5)
+Esperado: false, stock sin cambios
+La cantidad es negativa, se rechaza la solicitud
+DESPUÉS: M02 (stock=13)
+Resultado: false
+
+--- Caso negativo: código null ---
+ANTES  : M01 → M02 → M03 → M04 → M05
+Llamada: ActualizarStock(null, 10)
+Esperado: false
+El código es null, se rechaza la solicitud
+DESPUÉS: M01 → M02 → M03 → M04 → M05 (sin cambios)
+Resultado: false
+
+--- Caso negativo: lista vacía ---
+ANTES  : (lista vacía)
+Llamada: ActualizarStock("M01", 10)
+Esperado: false
+Medicamento no encontrado
+DESPUÉS: (lista vacía, sin cambios)
+Resultado: false
 
 === d) ListarPreciosInversos() ===
 
@@ -479,7 +560,7 @@ java -cp bin Main
 | Redondeo explícito en divisiones | `PromedioPrecioPorCategoria` divide con escala 2 y `RoundingMode.HALF_UP`: sin ellos, `BigDecimal.divide` lanza `ArithmeticException` cuando el cociente no es exacto. |
 | Validación en el constructor | Un `Medicamento` nunca puede crearse con campos `null`, stock negativo ni precio negativo: falla rápido con `IllegalArgumentException`. |
 | Comparación con `.equals()` y de `enum` con `name()` | En Java, `==` compara referencias, no contenido; usarlo con `String` produciría un error silencioso. Además, un `enum` nunca es igual a un `String`: `PromedioPrecioPorCategoria` compara `categoria.name().equals(...)`, porque `getCategoria().equals(...)` daría siempre `false` (documentado en [Lógica_PromedioPrecioPorCategoria.md](Documentaci%C3%B3n/L%C3%B3gica_PromedioPrecioPorCategoria.md)). |
-| *Guard clauses* y retornos tempranos | Las entradas inválidas se rechazan al inicio del método con un valor de retorno neutro (`false`, `0`, `0.0` o arreglo vacío). Cuando un mismo retorno puede deberse a varias causas, se imprime un mensaje informativo: `AplicarAumentoGeneral` lo hace con porcentaje negativo o cero (la lista vacía retorna `0` sin mensaje) y `ActualizarStock` lo prevé en su documento de lógica. |
+| *Guard clauses* y retornos tempranos | Las entradas inválidas se rechazan al inicio del método con un valor de retorno neutro (`false`, `0`, `0.0` o arreglo vacío). Cuando un mismo retorno puede deberse a varias causas, se imprime un mensaje informativo: `AplicarAumentoGeneral` lo hace con porcentaje negativo o cero (la lista vacía retorna `0` sin mensaje) y `ActualizarStock` con código `null`, cantidad negativa o medicamento inexistente. |
 | Dos pasadas para arreglos filtrados | En `MedicamentosAgotados()` primero se cuenta cuántos cumplen la condición y luego se llena un arreglo del tamaño exacto del resultado. |
 | Patrón mutar–extraer–restaurar | `ListarPreciosInversos()` invierte la lista, extrae los precios y la vuelve a invertir, sin memoria adicional y sin dejar efectos secundarios. |
 | Porcentajes como fracción decimal | `AplicarAumentoGeneral(0.25)` significa +25 %; la fórmula aplicada es `precio × (1 + porcentaje)`. |
@@ -490,7 +571,7 @@ java -cp bin Main
 
 ## Estado del Proyecto
 
-Versión actual: **en desarrollo** (3 de 5 operaciones implementadas).
+Versión actual: **Parcial 1 completo** (5 de 5 operaciones implementadas, con sus documentos de lógica y sus baterías de pruebas activas).
 
 ### Progreso
 
@@ -502,19 +583,20 @@ Versión actual: **en desarrollo** (3 de 5 operaciones implementadas).
 - [x] **(b)** `PromedioPrecioPorCategoria(String)`: implementada, pruebas activas
 - [x] **(d)** `ListarPreciosInversos()` + auxiliar `invertir()`: implementada, pruebas activas
 - [x] **(e)** `AplicarAumentoGeneral(double)`: implementada, pruebas activas
-- [ ] **(a)** `MedicamentosAgotados()`: documentada, pruebas listas para activar
-- [ ] **(c)** `ActualizarStock(String, int)`: documentada, pruebas listas para activar
+- [x] **(a)** `MedicamentosAgotados()`: implementada, pruebas activas
+- [x] **(c)** `ActualizarStock(String, int)`: implementada, pruebas activas
 
-### Flujo de trabajo para completar una operación pendiente
+### Flujo de trabajo seguido para completar cada operación
 
 1. Leer el documento de lógica correspondiente en [`Documentación/`](Documentaci%C3%B3n/).
-2. Implementar el método en [`ListaSimple.java`](FarmaVida/src/ListaSimple.java), en el lugar indicado por el comentario con el nombre del responsable.
-3. Quitar los delimitadores `/*` y `*/` que envuelven el bloque de pruebas de esa operación en [`Main.java`](FarmaVida/src/Main.java).
+2. Implementar el método en [`ListaSimple.java`](FarmaVida/src/ListaSimple.java), bajo el comentario con el nombre del responsable.
+3. Activar el bloque de pruebas de esa operación en [`Main.java`](FarmaVida/src/Main.java).
 4. Ejecutar `Main` y verificar que cada caso coincida con su valor *Esperado*.
+
+Las cinco operaciones (a–e) completaron este flujo; sus bloques de pruebas están activos en [`Main.java`](FarmaVida/src/Main.java).
 
 ### Observaciones conocidas
 
-- **Sin `.gitignore`:** la carpeta `bin/` se retiró del repositorio, pero volverá a aparecer como carpeta sin seguimiento al compilar. Se recomienda añadir un `.gitignore` que la excluya.
 - **Escala de los resultados:** `AplicarAumentoGeneral` no redondea, por lo que los precios resultantes tienen más de dos decimales (p. ej. `2.750`, `13.200`), mientras que `PromedioPrecioPorCategoria` redondea a 2 decimales y devuelve `0.0` (un decimal) cuando no hay coincidencias.
 - **`AplicarAumentoGeneral` con valores no numéricos:** no valida `Double.NaN` ni `Double.POSITIVE_INFINITY`; con ellos `BigDecimal.valueOf` lanza `NumberFormatException`.
 - **`ListarPreciosInversos` y el atributo `cantidad`:** el arreglo se dimensiona con `cantidad`; si este valor es menor que el número real de nodos, el método lanza `ArrayIndexOutOfBoundsException` y la lista queda invertida.

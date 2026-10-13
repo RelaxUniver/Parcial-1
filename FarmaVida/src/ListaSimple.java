@@ -28,37 +28,37 @@ public class ListaSimple {
     }
 
     // Jorge Luis Reyes Pérez
-    public String[] MedicamentosAgotados(){
-        Nodo cursor=inicio;
-        int contador=0;
-        if(inicio == null){
+    public String[] MedicamentosAgotados() {
+        Nodo cursor = inicio;
+        int contador = 0;
+        if (inicio == null) {
             return new String[0];
         }
-        
-        while (cursor != null){
-            if (cursor.getDato().getStock() <= 5){
+
+        while (cursor != null) {
+            if (cursor.getDato().getStock() <= 5) {
                 contador++;
             }
-            cursor=cursor.getSiguiente();
+            cursor = cursor.getSiguiente();
         }
-        String[] aux=new String[contador];
-        cursor=inicio;
-        int posicionAux=0;
-        while (cursor != null){
-            if (cursor.getDato().getStock() <= 5){
-                aux[posicionAux]=cursor.getDato().getNombre();
+        String[] aux = new String[contador];
+        cursor = inicio;
+        int posicionAux = 0;
+        while (cursor != null) {
+            if (cursor.getDato().getStock() <= 5) {
+                aux[posicionAux] = cursor.getDato().getNombre();
                 posicionAux++;
             }
-            cursor=cursor.getSiguiente();
+            cursor = cursor.getSiguiente();
         }
 
         return aux;
     }
 
     // Geonel Sánchez
-     public BigDecimal PromedioPrecioPorCategoria(String categoria) {
+    public BigDecimal PromedioPrecioPorCategoria(String categoria) {
 
-        if (categoria == null){
+        if (categoria == null) {
             return new BigDecimal("0.0");
         }
 
@@ -78,16 +78,16 @@ public class ListaSimple {
             return new BigDecimal("0.0");
         }
 
-        BigDecimal promedio = sumaPrecios.divide(BigDecimal.valueOf(cantidadMedicamentos),2, RoundingMode.HALF_UP);
+        BigDecimal promedio = sumaPrecios.divide(BigDecimal.valueOf(cantidadMedicamentos), 2, RoundingMode.HALF_UP);
 
         return promedio;
     }
 
     // Merlyn Sosa Borges
-        public boolean ActualizarStock(String codigo, int cantidadAgregada) {
+    public boolean ActualizarStock(String codigo, int cantidadAgregada) {
 
         if (codigo == null) {
-            System.out.println("El código no existe, no se realizarán cambios ");
+            System.out.println("El código es null, se rechaza la solicitud");
             return false;
         }
 
@@ -119,14 +119,14 @@ public class ListaSimple {
         Nodo actual = this.inicio;
         Nodo anterior = null;
 
-        while(actual!=null) {
+        while (actual != null) {
             Nodo siguiente = actual.getSiguiente();
             actual.setSiguiente(anterior);
             anterior = actual;
             actual = siguiente;
         }
         this.inicio = anterior;
-        
+
     }
 
     public BigDecimal[] ListarPreciosInversos() {
@@ -136,7 +136,7 @@ public class ListaSimple {
         int i = 0;
         Nodo actual = inicio;
 
-        while(actual != null) {
+        while (actual != null) {
             preciosInvertidos[i++] = actual.getDato().getPrecio();
             actual = actual.getSiguiente();
         }
@@ -162,12 +162,12 @@ public class ListaSimple {
 
         BigDecimal factor = BigDecimal.ONE.add(BigDecimal.valueOf(porcentaje));
 
-        int modificados= 0;
-        Nodo actual= inicio;
+        int modificados = 0;
+        Nodo actual = inicio;
 
         while (actual != null) {
 
-            Medicamento med= actual.getDato();
+            Medicamento med = actual.getDato();
             med.setPrecio(med.getPrecio().multiply(factor));
             modificados++;
             actual = actual.getSiguiente();

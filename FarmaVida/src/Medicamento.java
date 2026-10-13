@@ -16,7 +16,7 @@ public class Medicamento {
 		this.nombre = nombre;
 		this.categoria = categoria;
 		if (stock < 0) {
-			throw new IllegalArgumentException("No se permite stocks negativos.");
+			throw new IllegalArgumentException("No se permiten stocks negativos.");
 		}
 		this.stock = stock;
 		if (precio.signum() < 0) {
