@@ -15,15 +15,22 @@ La operación consiste en validar el porcentaje, calcular una sola vez el factor
 
 ## 2. Aviso Importante
 
-### Triple significado del valor `0`
+### Cuádruple significado del valor `0`
 
-El método retorna `0` en **tres situaciones distintas**:
+El método retorna `0` en **cuatro situaciones distintas**:
 
 1. La lista estaba vacía (ningún medicamento que modificar).
-2. El porcentaje recibido era negativo (rechazado).
-3. El porcentaje recibido era `0.0` (no hubo cambios reales).
+2. El porcentaje recibido no era un número finito (`NaN` o infinito, rechazado).
+3. El porcentaje recibido era negativo (rechazado).
+4. El porcentaje recibido era `0.0` (no hubo cambios reales).
 
-Como los tres casos devuelven el mismo valor numérico, quien llame al método no puede distinguirlos solo con el retorno. Por eso, cuando el porcentaje es negativo o cero se imprime un mensaje informativo antes de retornar. En el caso de la lista vacía no se imprime ningún mensaje: el ciclo simplemente no se ejecuta y se retorna `0`.
+Como los cuatro casos devuelven el mismo valor numérico, quien llame al método no puede distinguirlos solo con el retorno. Por eso, cuando el porcentaje es no finito, negativo o cero se imprime un mensaje informativo antes de retornar. En el caso de la lista vacía no se imprime ningún mensaje: el ciclo simplemente no se ejecuta y se retorna `0`.
+
+```
+ESCRIBIR "El porcentaje debe ser un número finito"
+ESCRIBIR "El porcentaje no puede ser negativo"
+ESCRIBIR "No hubo cambios: el porcentaje es 0"
+```
 
 ### Convención del parámetro
 
@@ -60,18 +67,25 @@ El método **no redondea**. Al multiplicar dos `BigDecimal`, la escala del resul
 
 El valor es numéricamente el mismo que se obtendría redondeando (`2.750` equivale a `2.75`), pero el `BigDecimal` conserva los decimales adicionales.
 
-### Valores no numéricos
+### Valores no finitos (`NaN` e infinito)
 
-El método no valida `Double.NaN` ni `Double.POSITIVE_INFINITY`. Ninguno de los dos cumple `porcentaje < 0` ni `porcentaje == 0.0`, por lo que superan las validaciones y `BigDecimal.valueOf(porcentaje)` lanza `NumberFormatException`.
+`BigDecimal.valueOf(double)` no admite `Double.NaN` ni `Double.POSITIVE_INFINITY` (ni `NEGATIVE_INFINITY`) y lanzaría `NumberFormatException`. Además, `NaN` no cumple `porcentaje < 0` ni `porcentaje == 0.0`, por lo que superaría las otras dos validaciones.
+
+Por eso la primera guard clause del método comprueba `Double.isFinite(porcentaje)`: si el valor no es finito, se imprime un mensaje y se retorna `0` **antes** de calcular el factor, sin modificar ningún precio y sin lanzar ninguna excepción.
 
 ### Contador redundante con la lógica actual
 
-Como los porcentajes `0` y negativos se rechazan al inicio, todos los nodos que se recorren en el ciclo **se modifican sin excepción**. Eso significa que `modificados` termina valiendo siempre el número de nodos de la lista (que coincide con `cantidad` cuando este atributo está actualizado). Se deja igualmente porque documenta la intención del ciclo y hace el método más robusto ante cambios futuros.
+Como los porcentajes no finitos, `0` y negativos se rechazan al inicio, todos los nodos que se recorren en el ciclo **se modifican sin excepción**. Eso significa que `modificados` termina valiendo siempre el número de nodos de la lista (que coincide con `cantidad` cuando este atributo está actualizado). Se deja igualmente porque documenta la intención del ciclo y hace el método más robusto ante cambios futuros.
 
 ## 3. Pseudocódigo
 
 ```
 PROCEDIMIENTO AplicarAumentoGeneral(porcentaje)
+
+    SI (porcentaje no es un número finito) ENTONCES
+        ESCRIBIR "El porcentaje debe ser un número finito"
+        RETORNAR 0
+    FIN SI
 
     SI (porcentaje < 0) ENTONCES
         ESCRIBIR "El porcentaje no puede ser negativo"
@@ -130,11 +144,15 @@ Representación gráfica:
 
 ## 5. Trazado por iteraciones
 
-**Validación 1: porcentaje no negativo**
+**Validación 1: porcentaje finito**
+
+- `porcentaje = 0.10` → es un número finito, continúa.
+
+**Validación 2: porcentaje no negativo**
 
 - `porcentaje = 0.10` → `0.10 < 0` es falso, continúa.
 
-**Validación 2: porcentaje distinto de cero**
+**Validación 3: porcentaje distinto de cero**
 
 - `porcentaje = 0.10` → `0.10 == 0.0` es falso, continúa.
 
@@ -251,7 +269,7 @@ La lista queda intacta.
 
 Llamada: `AplicarAumentoGeneral(0.0)`
 
-- `porcentaje = 0.0`, y `0.0 < 0` es falso, así que pasa la primera validación.
+- `porcentaje = 0.0`, es finito y `0.0 < 0` es falso, así que pasa las dos primeras validaciones.
 - `0.0 == 0.0` es verdadero.
 - Se imprime `"No hubo cambios: el porcentaje es 0"`.
 - Retorna `0` sin modificar la lista.
@@ -266,7 +284,7 @@ inicio = null
 
 Llamada: `AplicarAumentoGeneral(0.10)`
 
-- Las dos validaciones del porcentaje pasan (el porcentaje es válido).
+- Las tres validaciones del porcentaje pasan (el porcentaje es válido).
 - `factor = 1.1`; `actual = inicio = null`, el ciclo no se ejecuta ni una vez.
 - `modificados` queda en 0.
 - Retorna `0`, sin imprimir ningún mensaje.
@@ -302,6 +320,8 @@ No se requiere validación adicional: el porcentaje sigue siendo válido aunque 
 
 Llamadas: `AplicarAumentoGeneral(Double.NaN)` o `AplicarAumentoGeneral(Double.POSITIVE_INFINITY)`
 
-- Ningún valor cumple `porcentaje < 0` ni `porcentaje == 0.0`, así que ambas validaciones pasan.
-- `BigDecimal.valueOf(porcentaje)` lanza `NumberFormatException` al calcular el factor, antes de recorrer la lista.
-- Ningún precio se modifica, pero el error no se captura dentro del método.
+- `Double.isFinite(porcentaje)` es falso en ambos casos.
+- Se imprime `"El porcentaje debe ser un número finito"`.
+- Retorna `0` antes de calcular el factor, sin lanzar ninguna excepción.
+
+La lista queda intacta: ningún precio se modifica. Ambos casos se cubren en `Main.java`.

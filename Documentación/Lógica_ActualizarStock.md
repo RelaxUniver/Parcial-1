@@ -8,29 +8,37 @@ Se tienen los siguientes elementos principales para buscar el medicamento y actu
 | actual | Puntero auxiliar que recorre la lista nodo a nodo. |
 | codigo | Parámetro de entrada: el código del medicamento a actualizar. |
 | cantidadAgregada | Parámetro de entrada: la cantidad que se suma al stock actual. |
-| aumento | Variable auxiliar que guarda el resultado de la suma antes de asignarlo al nodo. |
+| aumento | Variable auxiliar de tipo `long` que guarda el resultado de la suma antes de asignarlo al nodo. |
 
-La operación consiste en recorrer la lista desde el inicio hasta `null`, comparando el código de cada nodo con el código recibido. Si se encuentra coincidencia, se calcula el nuevo stock sumando `cantidadAgregada` al stock actual, se actualiza el nodo y se retorna `true`. Si el ciclo termina sin encontrar el medicamento, se retorna `false`.
+La operación consiste en recorrer la lista desde el inicio hasta `null`, comparando el código de cada nodo con el código recibido. Si se encuentra coincidencia, se calcula el nuevo stock sumando `cantidadAgregada` al stock actual; si la suma cabe en un `int`, se actualiza el nodo y se retorna `true`. Si el ciclo termina sin encontrar el medicamento, se retorna `false`.
 
 ## 2. Aviso Importante
 
-### Triple significado del valor `false`
+### Cuádruple significado del valor `false`
 
-El método devuelve `false` en **tres situaciones distintas**:
+El método devuelve `false` en **cuatro situaciones distintas**:
 
 1. El código recibido es `null`.
 2. La cantidad recibida es negativa (no tiene sentido restar stock con este método).
-3. El medicamento con ese código no existe en la lista.
+3. La suma del stock actual y la cantidad agregada excede el máximo que admite un `int` (`Integer.MAX_VALUE`).
+4. El medicamento con ese código no existe en la lista.
 
-Como los tres casos devuelven el mismo valor booleano, quien llame al método no puede distinguirlos solo con el retorno. Por eso, en cada caso se imprime un mensaje informativo antes de retornar:
+Como los cuatro casos devuelven el mismo valor booleano, quien llame al método no puede distinguirlos solo con el retorno. Por eso, en cada caso se imprime un mensaje informativo antes de retornar:
 
 ```
 ESCRIBIR "El código es null, se rechaza la solicitud"
 ESCRIBIR "La cantidad es negativa, se rechaza la solicitud"
+ESCRIBIR "El stock excede el máximo permitido, se rechaza la solicitud"
 ESCRIBIR "Medicamento no encontrado"
 ```
 
 Esto no cambia el retorno, pero le permite al usuario saber qué pasó realmente.
+
+### Desbordamiento del stock
+
+El stock es un `int`. Si se sumaran en `int` un stock cercano a `Integer.MAX_VALUE` y una cantidad positiva, el resultado se desbordaría y pasaría a ser un número **negativo** (por ejemplo, `2147483647 + 1 = -2147483648`), y el stock quedaría corrupto sin ninguna advertencia.
+
+Para evitarlo, la suma se calcula en `long` (`(long) stock + cantidadAgregada`), que sí puede representar el resultado, y se compara con `Integer.MAX_VALUE` antes de asignarlo. Si lo excede, se rechaza la solicitud y el stock queda sin cambios.
 
 ## 3. Pseudocódigo
 
@@ -52,8 +60,14 @@ PROCEDIMIENTO ActualizarStock(codigo, cantidadAgregada)
     CICLO (actual != null) {
 
         SI (actual.getCodigo().equals(codigo)) ENTONCES
-            aumento = actual.getStock() + cantidadAgregada
-            actual.setStock(aumento)
+            aumento = (long) actual.getStock() + cantidadAgregada
+
+            SI (aumento > Integer.MAX_VALUE) ENTONCES
+                ESCRIBIR "El stock excede el máximo permitido, se rechaza la solicitud"
+                RETORNAR false
+            FIN SI
+
+            actual.setStock((int) aumento)
             RETORNAR true
         FIN SI
 
@@ -131,7 +145,8 @@ Evaluación:
 
 - `actual = N2`
 - `N2.getCodigo() = "c2"`, comparado con `"c2"` → verdadero
-- `aumento = N2.getStock() + 5 = 8 + 5 = 13`
+- `aumento = (long) N2.getStock() + 5 = 8 + 5 = 13`
+- `13 > Integer.MAX_VALUE` → falso, la suma cabe en un `int`
 - `N2.setStock(13)`
 - `RETORNAR true`
 
@@ -231,3 +246,20 @@ Llamada: `ActualizarStock("c2", 0)`
 - Si existe, `aumento = stock + 0 = stock`, se asigna el mismo valor y retorna `true`.
 
 Es una operación sin efecto real, pero válida: el stock no cambia y el método confirma que el medicamento existe.
+
+### Caso borde 6: la suma excede el stock máximo
+
+Ejemplo:
+
+```
+[N1: cMax, stock=2147483647] -> null
+```
+
+Llamada: `ActualizarStock("cMax", 1)`
+
+- Se encuentra `N1`, y `aumento = (long) 2147483647 + 1 = 2147483648`.
+- `2147483648 > Integer.MAX_VALUE` es verdadero.
+- Se imprime `"El stock excede el máximo permitido, se rechaza la solicitud"`.
+- Retorna `false` sin modificar el stock.
+
+Sin esta validación, la suma en `int` daría `-2147483648` y el medicamento quedaría con stock negativo. El caso se cubre en `Main.java` con el medicamento `MMAX`.

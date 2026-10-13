@@ -68,7 +68,7 @@ public class Medicamento {
 
 	public void setStock(int stock) {
 		if (stock < 0) {
-			throw new IllegalArgumentException("No se permite precios negativos.");
+			throw new IllegalArgumentException("No se permite stocks negativos.");
 		}
 		this.stock = stock;
 	}

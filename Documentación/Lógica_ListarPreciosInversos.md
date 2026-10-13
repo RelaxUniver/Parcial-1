@@ -8,15 +8,16 @@ Se tienen los siguientes elementos principales para construir el arreglo de prec
 | actual | Puntero auxiliar que recorre la lista nodo a nodo. |
 | anterior | Puntero auxiliar usado por `invertir()` para reasignar los enlaces. |
 | siguiente | Puntero auxiliar usado por `invertir()` para no perder el resto de la lista. |
-| cantidad | Atributo de la lista que indica cuántos nodos tiene en total. |
+| totalNodos | Contador con el número real de nodos de la lista, obtenido con una primera pasada de conteo. |
 | arreglo | Arreglo auxiliar (`BigDecimal[]`, llamado `preciosInvertidos` en el código) donde se almacenan los precios. |
 | i | Índice que recorre el arreglo mientras se llena. |
 
-La operación se apoya en un método auxiliar `invertir()` que da vuelta la lista en su lugar. El método público sigue tres pasos:
+La operación se apoya en un método auxiliar `invertir()` que da vuelta la lista en su lugar. El método público sigue cuatro pasos:
 
-1. Invertir la lista con `invertir()`.
-2. Recorrer la lista ya invertida y guardar cada precio en un arreglo.
-3. Invertir la lista otra vez para restaurarla a su orden original.
+1. Contar los nodos reales de la lista (`totalNodos`).
+2. Invertir la lista con `invertir()`.
+3. Recorrer la lista ya invertida y guardar cada precio en un arreglo de tamaño `totalNodos`.
+4. Invertir la lista otra vez para restaurarla a su orden original.
 
 Al final se devuelve el arreglo con los precios en orden inverso al que fueron ingresados, y la lista de medicamentos queda exactamente como estaba antes de la llamada.
 
@@ -33,16 +34,16 @@ Por eso, la corrección de `invertir()` y del ciclo intermedio es crítica: **no
 
 ### Tamaño correcto del arreglo
 
-En este método, el arreglo se crea con `arreglo[cantidad]`. Esto es correcto porque **cada nodo tiene exactamente un precio** y todos se incluyen en el resultado, sin filtros. Es lo contrario de lo que ocurría en `MedicamentosAgotados()`, donde solo algunos nodos cumplían la condición y el arreglo debía dimensionarse con el número de resultados, no con la cantidad total de nodos.
+En este método, el arreglo se crea con `arreglo[totalNodos]`. Esto es correcto porque **cada nodo tiene exactamente un precio** y todos se incluyen en el resultado, sin filtros. Es lo contrario de lo que ocurría en `MedicamentosAgotados()`, donde solo algunos nodos cumplían la condición y el arreglo debía dimensionarse con el número de resultados, no con la cantidad total de nodos.
 
-**Dependencia del atributo `cantidad`:** el tamaño del arreglo se toma del atributo `cantidad` de la lista, no de un conteo de los nodos. Por eso `cantidad` debe mantenerse consistente con la cantidad real de nodos (en `Main` se asigna con `setCantidad`). Si fuera menor que el número real de nodos, el ciclo intermedio lanzaría `ArrayIndexOutOfBoundsException` y, al no ejecutarse la segunda inversión, la lista quedaría invertida de forma permanente: es exactamente el riesgo descrito en la sección anterior.
+**Independencia del atributo `cantidad`:** el tamaño del arreglo no se toma del atributo `cantidad` de la lista, sino de un conteo de los nodos reales hecho **antes** de invertir. Así el método es correcto aunque `cantidad` esté desactualizado (por ejemplo, si se olvidó llamar a `setCantidad`): un valor menor que el número real de nodos ya no provoca `ArrayIndexOutOfBoundsException` ni deja la lista invertida de forma permanente, que era el riesgo descrito en la sección anterior.
 
 ### Ausencia de casos borde especiales
 
 A diferencia de otros métodos, aquí no se requiere ninguna guard clause adicional. La lista vacía y la lista con un solo nodo caen naturalmente en la lógica general:
 
-- Con lista vacía, `invertir()` no hace nada, el arreglo se crea de tamaño 0, el ciclo no corre, `invertir()` no hace nada otra vez, y se retorna un arreglo vacío.
-- Con un solo nodo, `invertir()` no cambia nada, el arreglo se crea de tamaño 1, y el ciclo guarda ese único precio.
+- Con lista vacía, el conteo da 0, `invertir()` no hace nada, el arreglo se crea de tamaño 0, el ciclo no corre, `invertir()` no hace nada otra vez, y se retorna un arreglo vacío.
+- Con un solo nodo, el conteo da 1, `invertir()` no cambia nada, el arreglo se crea de tamaño 1, y el ciclo guarda ese único precio.
 
 ## 3. Pseudocódigo
 
@@ -66,9 +67,20 @@ FIN PROCEDIMIENTO
 
 PROCEDIMIENTO ListarPreciosInversos()
 
+    // Paso 1: contar los nodos reales
+    totalNodos = 0
+    actual = inicio
+
+    CICLO (actual != null) {
+        totalNodos++
+        actual = actual.siguiente
+    }
+
+    // Paso 2: invertir la lista
     invertir()
 
-    arreglo = nuevo arreglo de tamaño cantidad
+    // Paso 3: extraer los precios
+    arreglo = nuevo arreglo de tamaño totalNodos
     i = 0
     actual = inicio
 
@@ -78,6 +90,7 @@ PROCEDIMIENTO ListarPreciosInversos()
         actual = actual.siguiente
     }
 
+    // Paso 4: restaurar la lista
     invertir()
 
     RETORNAR arreglo
@@ -96,8 +109,7 @@ Lista inicial:
 Estado inicial:
 
 ```
-inicio   = N1
-cantidad = 3
+inicio = N1
 ```
 
 Representación gráfica:
@@ -108,7 +120,20 @@ Representación gráfica:
 
 ## 5. Trazado por iteraciones
 
-### Paso 1: primera llamada a `invertir()`
+### Paso 1: contar los nodos
+
+```
+totalNodos = 0
+actual = N1
+```
+
+- Iteración 1: `actual = N1`, `totalNodos = 1`, `actual = N2`
+- Iteración 2: `actual = N2`, `totalNodos = 2`, `actual = N3`
+- Iteración 3: `actual = N3`, `totalNodos = 3`, `actual = null`
+
+El ciclo termina porque `actual == null`. Resultado: `totalNodos = 3`.
+
+### Paso 2: primera llamada a `invertir()`
 
 Estado inicial de `invertir()`:
 
@@ -176,10 +201,10 @@ Lista después de la primera inversión:
 [N3 | inicio] -> [N2] -> [N1] -> null
 ```
 
-### Paso 2: crear arreglo y recorrer
+### Paso 3: crear arreglo y recorrer
 
 ```
-arreglo = nuevo arreglo de tamaño 3
+arreglo = nuevo arreglo de tamaño totalNodos = 3
 i = 0
 actual = inicio = N3
 ```
@@ -211,7 +236,7 @@ arreglo = [15.0, 20.0, 10.0]
 i = 3
 ```
 
-### Paso 3: segunda llamada a `invertir()`
+### Paso 4: segunda llamada a `invertir()`
 
 Estado inicial de `invertir()`:
 
@@ -220,7 +245,7 @@ actual   = N3
 anterior = null
 ```
 
-Se aplica el mismo procedimiento que en el paso 1. Al terminar:
+Se aplica el mismo procedimiento que en el paso 2. Al terminar:
 
 ```
 inicio = N1
@@ -262,9 +287,9 @@ La lista queda igual que al inicio, porque la segunda inversión la restauró.
 
 ```
 inicio = null
-cantidad = 0
 ```
 
+- Conteo: `actual = null`, el ciclo no corre, `totalNodos = 0`.
 - Primera llamada a `invertir()`: `actual = null`, el ciclo no corre, `inicio = anterior = null`. No cambia nada.
 - `arreglo = nuevo arreglo de tamaño 0`.
 - `actual = inicio = null`, el ciclo no corre ni una vez.
@@ -279,9 +304,9 @@ Ejemplo:
 
 ```
 [N1: precio=10.0] -> null
-cantidad = 1
 ```
 
+- Conteo: `totalNodos = 1`.
 - Primera llamada a `invertir()`:
   - `actual = N1`, `anterior = null`
   - Iteración 1: `siguiente = null`, `N1.siguiente = null`, `anterior = N1`, `actual = null`
@@ -292,3 +317,19 @@ cantidad = 1
 - Retorna `[10.0]`.
 
 El único precio se devuelve tal cual, porque el orden inverso de una lista de un elemento es ella misma.
+
+### Caso borde 3: el atributo `cantidad` no coincide con los nodos
+
+Ejemplo:
+
+```
+[Q1: precio=1.00] -> [Q2: precio=2.00] -> null
+cantidad = 1        (el valor real sería 2)
+```
+
+- Conteo: recorre los nodos y obtiene `totalNodos = 2`; el atributo `cantidad` no se consulta.
+- `arreglo = nuevo arreglo de tamaño 2`.
+- La lista se invierte, se extraen `[2.00, 1.00]` y se vuelve a invertir.
+- Retorna `[2.00, 1.00]` y la lista queda restaurada.
+
+Si el arreglo se dimensionara con `cantidad` (1), la segunda iteración intentaría escribir en `arreglo[1]` y lanzaría `ArrayIndexOutOfBoundsException`, dejando la lista invertida. Contar los nodos evita ese problema. El caso se cubre en `Main.java` con el bloque *"el atributo cantidad no coincide con los nodos"*.
