@@ -101,8 +101,12 @@ public class ListaSimple {
         while (actual != null) {
 
             if (actual.getDato().getCodigo().equals(codigo)) {
-                int aumento = actual.getDato().getStock() + cantidadAgregada;
-                actual.getDato().setStock(aumento);
+                long aumento = (long) actual.getDato().getStock() + cantidadAgregada;
+                if (aumento > Integer.MAX_VALUE) {
+                    System.out.println("El stock excede el máximo permitido, se rechaza la solicitud");
+                    return false;
+                }
+                actual.getDato().setStock((int) aumento);
                 return true;
             }
 
@@ -131,10 +135,19 @@ public class ListaSimple {
 
     public BigDecimal[] ListarPreciosInversos() {
 
+        int totalNodos = 0;
+        Nodo actual = inicio;
+
+        while (actual != null) {
+            totalNodos++;
+            actual = actual.getSiguiente();
+        }
+
         invertir();
+
         BigDecimal[] preciosInvertidos = new BigDecimal[cantidad];
         int i = 0;
-        Nodo actual = inicio;
+        actual = inicio;
 
         while (actual != null) {
             preciosInvertidos[i++] = actual.getDato().getPrecio();
@@ -149,6 +162,11 @@ public class ListaSimple {
 
     // Ray Sanjudo Mesa
     public int AplicarAumentoGeneral(double porcentaje) {
+
+        if (!Double.isFinite(porcentaje)) {
+            System.out.println("El porcentaje debe ser un número finito");
+            return 0;
+        }
 
         if (porcentaje < 0) {
             System.out.println("El porcentaje no puede ser negativo");

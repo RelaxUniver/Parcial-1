@@ -8,11 +8,16 @@ public class Main {
         // a) MedicamentosAgotados()
 
         {
-            Nodo n5 = new Nodo(new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
-            Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")), n5);
-            Nodo n3 = new Nodo(new Medicamento("M03", "Ibuprofeno", Categoria.ANTIINFLAMATORIO, 2, new BigDecimal("4.50")), n4);
-            Nodo n2 = new Nodo(new Medicamento("M02", "Amoxicilina", Categoria.ANTIBIÓTICO, 3, new BigDecimal("12.00")), n3);
-            Nodo n1 = new Nodo(new Medicamento("M01", "Paracetamol", Categoria.ANALGÉSICO, 15, new BigDecimal("2.50")), n2);
+            Nodo n5 = new Nodo(
+                    new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
+            Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")),
+                    n5);
+            Nodo n3 = new Nodo(
+                    new Medicamento("M03", "Ibuprofeno", Categoria.ANTIINFLAMATORIO, 2, new BigDecimal("4.50")), n4);
+            Nodo n2 = new Nodo(new Medicamento("M02", "Amoxicilina", Categoria.ANTIBIÓTICO, 3, new BigDecimal("12.00")),
+                    n3);
+            Nodo n1 = new Nodo(new Medicamento("M01", "Paracetamol", Categoria.ANALGÉSICO, 15, new BigDecimal("2.50")),
+                    n2);
             ListaSimple lista = new ListaSimple();
             lista.setInicio(n1);
             lista.setCantidad(5);
@@ -70,11 +75,16 @@ public class Main {
         // b) PromedioPrecioPorCategoria(String categoria)
 
         {
-            Nodo n5 = new Nodo(new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
-            Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")), n5);
-            Nodo n3 = new Nodo(new Medicamento("M03", "Ibuprofeno", Categoria.ANTIINFLAMATORIO, 2, new BigDecimal("4.50")), n4);
-            Nodo n2 = new Nodo(new Medicamento("M02", "Amoxicilina", Categoria.ANTIBIÓTICO, 3, new BigDecimal("12.00")), n3);
-            Nodo n1 = new Nodo(new Medicamento("M01", "Paracetamol", Categoria.ANALGÉSICO, 15, new BigDecimal("2.50")), n2);
+            Nodo n5 = new Nodo(
+                    new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
+            Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")),
+                    n5);
+            Nodo n3 = new Nodo(
+                    new Medicamento("M03", "Ibuprofeno", Categoria.ANTIINFLAMATORIO, 2, new BigDecimal("4.50")), n4);
+            Nodo n2 = new Nodo(new Medicamento("M02", "Amoxicilina", Categoria.ANTIBIÓTICO, 3, new BigDecimal("12.00")),
+                    n3);
+            Nodo n1 = new Nodo(new Medicamento("M01", "Paracetamol", Categoria.ANALGÉSICO, 15, new BigDecimal("2.50")),
+                    n2);
             ListaSimple lista = new ListaSimple();
             lista.setInicio(n1);
             lista.setCantidad(5);
@@ -124,13 +134,18 @@ public class Main {
         }
 
         // c) ActualizarStock(String codigo, int cantidadAgregada)
-    
+
         {
-            Nodo n5 = new Nodo(new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
-            Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")), n5);
-            Nodo n3 = new Nodo(new Medicamento("M03", "Ibuprofeno", Categoria.ANTIINFLAMATORIO, 2, new BigDecimal("4.50")), n4);
-            Nodo n2 = new Nodo(new Medicamento("M02", "Amoxicilina", Categoria.ANTIBIÓTICO, 3, new BigDecimal("12.00")), n3);
-            Nodo n1 = new Nodo(new Medicamento("M01", "Paracetamol", Categoria.ANALGÉSICO, 15, new BigDecimal("2.50")), n2);
+            Nodo n5 = new Nodo(
+                    new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
+            Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")),
+                    n5);
+            Nodo n3 = new Nodo(
+                    new Medicamento("M03", "Ibuprofeno", Categoria.ANTIINFLAMATORIO, 2, new BigDecimal("4.50")), n4);
+            Nodo n2 = new Nodo(new Medicamento("M02", "Amoxicilina", Categoria.ANTIBIÓTICO, 3, new BigDecimal("12.00")),
+                    n3);
+            Nodo n1 = new Nodo(new Medicamento("M01", "Paracetamol", Categoria.ANALGÉSICO, 15, new BigDecimal("2.50")),
+                    n2);
             ListaSimple lista = new ListaSimple();
             lista.setInicio(n1);
             lista.setCantidad(5);
@@ -185,16 +200,35 @@ public class Main {
             boolean c6 = listaVacia.ActualizarStock("M01", 10);
             System.out.println("DESPUÉS: (lista vacía, sin cambios)");
             System.out.println("Resultado: " + c6 + "\n");
+
+            Medicamento medMax = new Medicamento("MMAX", "Stock máximo", Categoria.VITAMINA, Integer.MAX_VALUE,
+                    new BigDecimal("1.00"));
+            ListaSimple listaMax = new ListaSimple();
+            listaMax.setInicio(new Nodo(medMax, null));
+            listaMax.setCantidad(1);
+
+            System.out.println("--- Caso borde: la suma excede el stock máximo ---");
+            System.out.println("ANTES  : MMAX (stock=" + Integer.MAX_VALUE + ")");
+            System.out.println("Llamada: ActualizarStock(\"MMAX\", 1)");
+            System.out.println("Esperado: false, stock sin cambios");
+            boolean c7 = listaMax.ActualizarStock("MMAX", 1);
+            System.out.println("DESPUÉS: MMAX (stock=" + medMax.getStock() + ")");
+            System.out.println("Resultado: " + c7 + "\n");
         }
 
         // d) ListarPreciosInversos()
 
         {
-            Nodo n5 = new Nodo(new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
-            Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")), n5);
-            Nodo n3 = new Nodo(new Medicamento("M03", "Ibuprofeno", Categoria.ANTIINFLAMATORIO, 2, new BigDecimal("4.50")), n4);
-            Nodo n2 = new Nodo(new Medicamento("M02", "Amoxicilina", Categoria.ANTIBIÓTICO, 3, new BigDecimal("12.00")), n3);
-            Nodo n1 = new Nodo(new Medicamento("M01", "Paracetamol", Categoria.ANALGÉSICO, 15, new BigDecimal("2.50")), n2);
+            Nodo n5 = new Nodo(
+                    new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
+            Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")),
+                    n5);
+            Nodo n3 = new Nodo(
+                    new Medicamento("M03", "Ibuprofeno", Categoria.ANTIINFLAMATORIO, 2, new BigDecimal("4.50")), n4);
+            Nodo n2 = new Nodo(new Medicamento("M02", "Amoxicilina", Categoria.ANTIBIÓTICO, 3, new BigDecimal("12.00")),
+                    n3);
+            Nodo n1 = new Nodo(new Medicamento("M01", "Paracetamol", Categoria.ANALGÉSICO, 15, new BigDecimal("2.50")),
+                    n2);
             ListaSimple lista = new ListaSimple();
             lista.setInicio(n1);
             lista.setCantidad(5);
@@ -230,16 +264,35 @@ public class Main {
             BigDecimal[] d3 = listaUnNodo.ListarPreciosInversos();
             System.out.println("DESPUÉS: Z01(7.25) (restaurada)");
             System.out.println("Resultado: " + Arrays.toString(d3) + "\n");
+
+            Nodo q2 = new Nodo(new Medicamento("Q02", "MedQ2", Categoria.VITAMINA, 1, new BigDecimal("2.00")), null);
+            Nodo q1 = new Nodo(new Medicamento("Q01", "MedQ1", Categoria.VITAMINA, 1, new BigDecimal("1.00")), q2);
+            ListaSimple listaDesfasada = new ListaSimple();
+            listaDesfasada.setInicio(q1);
+            listaDesfasada.setCantidad(1);
+
+            System.out.println("--- Caso borde: el atributo cantidad no coincide con los nodos ---");
+            System.out.println("ANTES  : Q01(1.00) → Q02(2.00), cantidad=1");
+            System.out.println("Llamada: ListarPreciosInversos()");
+            System.out.println("Esperado: [2.00, 1.00], lista restaurada");
+            BigDecimal[] d4 = listaDesfasada.ListarPreciosInversos();
+            System.out.println("DESPUÉS: lista restaurada = " + (listaDesfasada.getInicio() == q1));
+            System.out.println("Resultado: " + Arrays.toString(d4) + "\n");
         }
 
         // e) AplicarAumentoGeneral(double porcentaje)
 
         {
-            Nodo n5 = new Nodo(new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
-            Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")), n5);
-            Nodo n3 = new Nodo(new Medicamento("M03", "Ibuprofeno", Categoria.ANTIINFLAMATORIO, 2, new BigDecimal("4.50")), n4);
-            Nodo n2 = new Nodo(new Medicamento("M02", "Amoxicilina", Categoria.ANTIBIÓTICO, 3, new BigDecimal("12.00")), n3);
-            Nodo n1 = new Nodo(new Medicamento("M01", "Paracetamol", Categoria.ANALGÉSICO, 15, new BigDecimal("2.50")), n2);
+            Nodo n5 = new Nodo(
+                    new Medicamento("M05", "Azitromicina", Categoria.ANTIBIÓTICO, 5, new BigDecimal("15.00")), null);
+            Nodo n4 = new Nodo(new Medicamento("M04", "Vitamina C", Categoria.VITAMINA, 20, new BigDecimal("5.00")),
+                    n5);
+            Nodo n3 = new Nodo(
+                    new Medicamento("M03", "Ibuprofeno", Categoria.ANTIINFLAMATORIO, 2, new BigDecimal("4.50")), n4);
+            Nodo n2 = new Nodo(new Medicamento("M02", "Amoxicilina", Categoria.ANTIBIÓTICO, 3, new BigDecimal("12.00")),
+                    n3);
+            Nodo n1 = new Nodo(new Medicamento("M01", "Paracetamol", Categoria.ANALGÉSICO, 15, new BigDecimal("2.50")),
+                    n2);
             ListaSimple lista = new ListaSimple();
             lista.setInicio(n1);
             lista.setCantidad(5);
@@ -291,7 +344,21 @@ public class Main {
             int e5 = listaUnNodo.AplicarAumentoGeneral(0.10);
             System.out.println("DESPUÉS: Z01(7.975)");
             System.out.println("Resultado: " + e5 + "\n");
+
+            System.out.println("--- Caso negativo: porcentaje NaN ---");
+            System.out.println("Llamada: AplicarAumentoGeneral(Double.NaN)");
+            System.out.println("Esperado: 0");
+            int e6 = lista.AplicarAumentoGeneral(Double.NaN);
+            System.out.println("DESPUÉS: precios sin cambios");
+            System.out.println("Resultado: " + e6 + "\n");
+
+            System.out.println("--- Caso negativo: porcentaje infinito ---");
+            System.out.println("Llamada: AplicarAumentoGeneral(Double.POSITIVE_INFINITY)");
+            System.out.println("Esperado: 0");
+            int e7 = lista.AplicarAumentoGeneral(Double.POSITIVE_INFINITY);
+            System.out.println("DESPUÉS: precios sin cambios");
+            System.out.println("Resultado: " + e7 + "\n");
         }
-        
+
     }
 }

@@ -67,7 +67,7 @@ public class Medicamento {
 	}
 
 	public void setStock(int stock) {
-		if (precio.signum() < 0) {
+		if (stock < 0) {
 			throw new IllegalArgumentException("No se permite precios negativos.");
 		}
 		this.stock = stock;
@@ -76,6 +76,9 @@ public class Medicamento {
 	public void setPrecio(BigDecimal precio) {
 		if (precio == null) {
 			throw new IllegalArgumentException("Ningún campo puede ser null.");
+		}
+		if (precio.signum() < 0) {
+			throw new IllegalArgumentException("No se permite precios negativos.");
 		}
 		this.precio = precio;
 	}
